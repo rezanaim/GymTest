@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GymTest.Persistence.Data
 {
-    class DataBaseContex : DbContext //, IDataBaseContext
+    class DataBaseContext : DbContext //, IDataBaseContext
     {
         public DataBaseContext(DbContextOptions options) : base(options)
         {
