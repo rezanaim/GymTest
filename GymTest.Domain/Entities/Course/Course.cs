@@ -12,7 +12,7 @@ namespace GymTest.Domain.Entities.Course
         public string Name { get; set; }
         public int CouchId { get; set; }
 
-
+        //lets start
     }
 }
 
