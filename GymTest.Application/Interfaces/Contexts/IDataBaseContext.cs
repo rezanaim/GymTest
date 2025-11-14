@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GymTest.Application.Interfaces.Contexts
 {
-    interface IDataBaseContext
+    public interface IDataBaseContext
     {
-        DbSet<User> Users { get; set; }
+        public DbSet<User> Users { get; set; }
 
 
     }
