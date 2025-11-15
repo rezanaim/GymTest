@@ -7,11 +7,13 @@ using System.Threading.Tasks;
 
 namespace GymTest.Domain.Entities.Users
 {
-    class Role : BaseEntity
+    public class Role : BaseEntity
     {
         //Admin or
         public string Name { get; set; }
         
+        //Relation Between Tables
+        public ICollection<UserInRole> UserInRoles {get;set;}
     }
 }
 

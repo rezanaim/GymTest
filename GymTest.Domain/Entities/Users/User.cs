@@ -8,17 +8,14 @@ using System.Threading.Tasks;
 
 namespace GymTest.Domain.Entities.Users
 {
-    public class User //: BaseEntity
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
+        //public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        //public bool IsActive { get; set; }
-        //public ICollection<UserInRole> UserInRoles { get; set; }
-
-
-
+        public bool IsActive { get; set; }
+        public ICollection<UserInRole> UserInRoles { get; set; }
     }
 }
