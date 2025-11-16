@@ -12,6 +12,8 @@ using System.Threading.Tasks;
 using GymTest.Persistence.Data;
 using GymTest.Application.Services.Users.Command;
 using GymTest.Application.Interfaces.Contexts;
+using Microsoft.AspNetCore.Identity;
+using GymTest.Domain.Entities.Users;
 
 namespace EndPoint.Site
 
@@ -36,6 +38,7 @@ namespace EndPoint.Site
 
             services.AddScoped<IDataBaseContext, DataBaseContext>();
             services.AddScoped<IRegisterUser, RegisterUser>();
+            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
