@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using GymTest.Application.Interfaces.Contexts;
+using System.Threading;
 
 namespace GymTest.Persistence.Data
 {
@@ -17,6 +18,19 @@ namespace GymTest.Persistence.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInRole> UserInRoles { get; set; }
+
+        public Task<int> SaveChangeAsync(CancellationToken cancellationToken)
+        {
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+
+
+        // در فایل DataBaseContext.cs
+
+        // در فایل DataBaseContext.cs
+
+
         //DbSet<User> IDataBaseContext.Users { get; set; }
 
         //DbSet<User> IDataBaseContext.Users { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
