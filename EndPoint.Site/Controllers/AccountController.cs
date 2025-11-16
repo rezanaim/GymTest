@@ -30,7 +30,7 @@ namespace EndPoint.Site.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register(RequestRegisterUserDto request)
+        public IActionResult Register([FromBody]  RequestRegisterUserDto request)
         {
 
 
