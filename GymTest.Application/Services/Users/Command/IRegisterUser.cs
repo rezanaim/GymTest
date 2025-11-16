@@ -26,8 +26,134 @@ namespace GymTest.Application.Services.Users.Command
         }
         public ResultDto<ResultRegisterUserto> Execute(RequestRegisterUserDto request)
         {
+            try
+            {
 
-            if (string.IsNullOrWhiteSpace(request.Email))
+
+
+                if (string.IsNullOrWhiteSpace(request.Email))
+                {
+                    return new ResultDto<ResultRegisterUserto>()
+                    {
+                        Data = new ResultRegisterUserto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "لطفا ایمیل خود را وارد کنید"
+                    };
+                }
+
+                if (string.IsNullOrWhiteSpace(request.FirstName))
+                {
+                    return new ResultDto<ResultRegisterUserto>()
+                    {
+                        Data = new ResultRegisterUserto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "لطفا نام خود را وارد کنید"
+                    };
+                }
+
+                if (string.IsNullOrWhiteSpace(request.LastName))
+                {
+                    return new ResultDto<ResultRegisterUserto>()
+                    {
+                        Data = new ResultRegisterUserto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "لطفا نام خانوادگی خود را وارد کنید"
+                    };
+                }
+
+                if (string.IsNullOrWhiteSpace(request.Password))
+                {
+                    new ResultDto<ResultRegisterUserto>()
+                    {
+                        Data = new ResultRegisterUserto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "لطفا یک پسورد انتخاب کنید"
+                    };
+                }
+
+                if (request.Password != request.RePassword)
+                {
+                    new ResultDto<ResultRegisterUserto>()
+                    {
+                        Data = new ResultRegisterUserto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "پسورد و تکرار آن، یکسان نیستند"
+
+                    };
+                }
+                // چک فرمت ایمیل
+                string emailRegex = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
+                var match = Regex.Match(request.Email, emailRegex, RegexOptions.IgnoreCase);
+
+                if (!match.Success)
+                {
+                    return new ResultDto<ResultRegisterUserto>()
+                    {
+                        Data = new ResultRegisterUserto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "لطفا یک ایمیل معتبر وارد کنید"
+                    };
+                }
+
+                var passwordHasher = new PasswordHasher();
+                var hashedPassword = passwordHasher.HashPassword(request.Password);
+                var User = new User()
+                {
+                    Email = request.Email,
+                    FirstName = request.FirstName,
+                    LastName = request.LastName,
+                    Password = hashedPassword,
+                    IsActive = true,
+                };
+
+                var userInRoles = new List<UserInRole>();
+
+                foreach (var item in userInRoles)
+                {
+                    var role = _context.Roles.Find();
+                    userInRoles.Add(new UserInRole()
+                    {
+                        Role = role,
+                        RoleId = role.Id,
+                        User = User,
+                        UserId = User.Id,
+
+                    });
+
+                    User.UserInRoles = userInRoles;
+                    _context.Users.Add(User);
+                    _context.SaveChanges();
+
+                }
+                return new ResultDto<ResultRegisterUserto>()
+                {
+                    Data = new ResultRegisterUserto()
+                    {
+                        UserId = User.Id,
+                    },
+                    IsSuccess = true,
+                    Message = "ثبت نام با وفقیت انجام شد"
+                };
+            }
+            catch
             {
                 return new ResultDto<ResultRegisterUserto>()
                 {
@@ -36,110 +162,15 @@ namespace GymTest.Application.Services.Users.Command
                         UserId = 0,
                     },
                     IsSuccess = false,
-                    Message = "لطفا ایمیل خود را وارد کنید"
+                    Message = "ثبت نام انجام نشد!"
                 };
+
             }
-
-            if (string.IsNullOrWhiteSpace(request.FirstName))
-            {
-                return new ResultDto<ResultRegisterUserto>()
-                {
-                    Data = new ResultRegisterUserto()
-                    {
-                        UserId = 0,
-                    },
-                    IsSuccess = false,
-                    Message = "لطفا نام خود را وارد کنید"
-                };
             }
-
-            if (string.IsNullOrWhiteSpace(request.LastName))
-            {
-                return new ResultDto<ResultRegisterUserto>()
-                {
-                    Data = new ResultRegisterUserto()
-                    {
-                        UserId = 0,
-                    },
-                    IsSuccess = false,
-                    Message = "لطفا نام خانوادگی خود را وارد کنید"
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(request.Password))
-            {
-                new ResultDto<ResultRegisterUserto>()
-                {
-                    Data = new ResultRegisterUserto()
-                    {
-                        UserId = 0,
-                    },
-                    IsSuccess = false,
-                    Message = "لطفا یک پسورد انتخاب کنید"
-                };
-            }
-
-            if (request.Password != request.RePassword)
-            {
-                new ResultDto<ResultRegisterUserto>()
-                {
-                    Data = new ResultRegisterUserto()
-                    {
-                        UserId = 0,
-                    },
-                    IsSuccess = false,
-                    Message = "پسورد و تکرار آن، یکسان نیستند"
-
-                };
-            }
-            // چک فرمت ایمیل
-            string emailRegex = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
-            var match = Regex.Match(request.Email, emailRegex, RegexOptions.IgnoreCase);
-
-            if (!match.Success)
-            {
-                return new ResultDto<ResultRegisterUserto>()
-                {
-                    Data = new ResultRegisterUserto()
-                    {
-                        UserId = 0,
-                    },
-                    IsSuccess = false,
-                    Message = "لطفا یک ایمیل معتبر وارد کنید"
-                };
-            }
-
-            var passwordHasher = new PasswordHasher();
-            var hashedPassword = passwordHasher.HashPassword(request.Password);
-            var User = new User()
-            {
-                Email = request.Email,
-                FirstName = request.FirstName,
-                LastName = request.LastName,
-                Password = hashedPassword,
-                IsActive = true,
-            };
-
-            var userInRoles = new List<UserInRole>();
-
-            foreach (var item in userInRoles)
-            {
-                var roles = _context.Roles.Find();
-                userInRoles.Add(new UserInRole()
-                {
-                    Role = Roles,
-                    RoleId = roles.Id,
-                    User = User,
-                    UserId = User.Id,
-
-                });
-            }
-            User.UserInRoles = UserInRoles
-
-
-
+            //موقتا ریترن نال
+            //return null;
         }
-        //موقتا  ریترن نال
+
 
     }
 
@@ -162,5 +193,5 @@ namespace GymTest.Application.Services.Users.Command
         {
             public long UserId { get; set; }
         }
-    }
+    
 
