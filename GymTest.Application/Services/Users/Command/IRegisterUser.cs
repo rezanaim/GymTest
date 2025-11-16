@@ -15,7 +15,7 @@ namespace GymTest.Application.Services.Users.Command
 {
     public interface IRegisterUser
     {
-        ResultDto<ResultRegisterUserto> Execute(RequestRegisterUserDto request);
+        ResultDto<ResultRegisterUserDto> Execute(RequestRegisterUserDto request);
     }
     public class UserRegister : IRegisterUser
     {
@@ -25,7 +25,7 @@ namespace GymTest.Application.Services.Users.Command
         {
             _context = context;
         }
-        public ResultDto<ResultRegisterUserto> Execute(RequestRegisterUserDto request)
+        public ResultDto<ResultRegisterUserDto> Execute(RequestRegisterUserDto request)
         {
             try
             {
@@ -34,9 +34,9 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (string.IsNullOrWhiteSpace(request.Email))
                 {
-                    return new ResultDto<ResultRegisterUserto>()
+                    return new ResultDto<ResultRegisterUserDto>()
                     {
-                        Data = new ResultRegisterUserto()
+                        Data = new ResultRegisterUserDto()
                         {
                             UserId = 0,
                         },
@@ -47,9 +47,9 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (string.IsNullOrWhiteSpace(request.FirstName))
                 {
-                    return new ResultDto<ResultRegisterUserto>()
+                    return new ResultDto<ResultRegisterUserDto>()
                     {
-                        Data = new ResultRegisterUserto()
+                        Data = new ResultRegisterUserDto()
                         {
                             UserId = 0,
                         },
@@ -60,9 +60,9 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (string.IsNullOrWhiteSpace(request.LastName))
                 {
-                    return new ResultDto<ResultRegisterUserto>()
+                    return new ResultDto<ResultRegisterUserDto>()
                     {
-                        Data = new ResultRegisterUserto()
+                        Data = new ResultRegisterUserDto()
                         {
                             UserId = 0,
                         },
@@ -73,9 +73,9 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (string.IsNullOrWhiteSpace(request.Password))
                 {
-                    new ResultDto<ResultRegisterUserto>()
+                    new ResultDto<ResultRegisterUserDto>()
                     {
-                        Data = new ResultRegisterUserto()
+                        Data = new ResultRegisterUserDto()
                         {
                             UserId = 0,
                         },
@@ -86,9 +86,9 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (request.Password != request.RePassword)
                 {
-                    new ResultDto<ResultRegisterUserto>()
+                    new ResultDto<ResultRegisterUserDto>()
                     {
-                        Data = new ResultRegisterUserto()
+                        Data = new ResultRegisterUserDto()
                         {
                             UserId = 0,
                         },
@@ -103,9 +103,9 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (!match.Success)
                 {
-                    return new ResultDto<ResultRegisterUserto>()
+                    return new ResultDto<ResultRegisterUserDto>()
                     {
-                        Data = new ResultRegisterUserto()
+                        Data = new ResultRegisterUserDto()
                         {
                             UserId = 0,
                         },
@@ -144,9 +144,9 @@ namespace GymTest.Application.Services.Users.Command
                     _context.SaveChanges();
 
                 }
-                return new ResultDto<ResultRegisterUserto>()
+                return new ResultDto<ResultRegisterUserDto>()
                 {
-                    Data = new ResultRegisterUserto()
+                    Data = new ResultRegisterUserDto()
                     {
                         UserId = User.Id,
                     },
@@ -156,9 +156,9 @@ namespace GymTest.Application.Services.Users.Command
             }
             catch
             {
-                return new ResultDto<ResultRegisterUserto>()
+                return new ResultDto<ResultRegisterUserDto>()
                 {
-                    Data = new ResultRegisterUserto()
+                    Data = new ResultRegisterUserDto()
                     {
                         UserId = 0,
                     },
@@ -191,7 +191,7 @@ namespace GymTest.Application.Services.Users.Command
             public string Id { get; set; }
         }
 
-        public class ResultRegisterUserto
+        public class ResultRegisterUserDto
         {
             public long UserId { get; set; }
         }
