@@ -26,14 +26,6 @@ namespace GymTest.Persistence.Data
 
 
 
-        // در فایل DataBaseContext.cs
-
-        // در فایل DataBaseContext.cs
-
-
-        //DbSet<User> IDataBaseContext.Users { get; set; }
-
-        //DbSet<User> IDataBaseContext.Users { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
 
     }
