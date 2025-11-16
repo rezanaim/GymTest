@@ -19,7 +19,7 @@ namespace GymTest.Persistence.Data
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInRole> UserInRoles { get; set; }
 
-        public Task<int> SaveChangeAsync(CancellationToken cancellationToken)
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken)
         {
             return base.SaveChangesAsync(cancellationToken);
         }
