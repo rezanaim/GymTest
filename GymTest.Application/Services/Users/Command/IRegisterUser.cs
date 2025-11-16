@@ -4,6 +4,7 @@ using GymTest.Common;
 using GymTest.Domain.Entities.Users;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -179,6 +180,7 @@ namespace GymTest.Application.Services.Users.Command
             public string Email { get; set; }
             public string FirstName { get; set; }
             public string LastName { get; set; }
+            [MinLength(5, ErrorMessage = "پسورد باید حداقل 5 کاراکتر باشد")]
             public string Password { get; set; }
             public string RePassword { get; set; }
             public List<RoleInRegisterUserDto> Roles { get; set; }
