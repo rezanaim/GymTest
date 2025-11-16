@@ -30,7 +30,7 @@ namespace EndPoint.Site.Controllers
         }
 
         [HttpPost]
-        public IActionResult Register([FromBody]  RequestRegisterUserDto request)
+        public async Task <IActionResult> Register([FromBody]  RequestRegisterUserDto request)
         {
 
 
@@ -90,7 +90,7 @@ namespace EndPoint.Site.Controllers
                 }
                 // خ: اینا هم پیشنهاد جی پی تی بود و فعلا کامنت میشن
                 // ۲. فراخوانی سرویس برای اجرای منطق اصلی کسب‌وکار
-                var registerResult = _register.Execute(new RequestRegisterUserDto()
+                var registerResult = await _register.Execute(new RequestRegisterUserDto()
                 {
                     Email = request.Email,
                     FirstName = request.FirstName,
@@ -123,17 +123,13 @@ namespace EndPoint.Site.Controllers
                     {
                         IsPersistent = true
                     };
-                    HttpContext.SignInAsync(principal, properties);
+                    await HttpContext.SignInAsync(principal, properties);
 
                 }
 
-                //return Json(registerResult);
+            //return Json(registerResult);
 
-                return Json(new ResultDto
-                {
-                IsSuccess = true,
-                Message = "ثبت نام و ورود با موفقیت انجام شد"
-                });
+            return Json(registerResult);
             // این پایینیا هم راهنمان
 
             /*if (signeupResult.IsSuccess == true)

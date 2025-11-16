@@ -2,20 +2,24 @@
 using GymTest.Application.Interfaces.Contexts;
 using GymTest.Common;
 using GymTest.Domain.Entities.Users;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using static GymTest.Application.Services.Users.Command.RegisterUser;
+
 
 namespace GymTest.Application.Services.Users.Command
 {
     public interface IRegisterUser
     {
-        ResultDto<ResultRegisterUserDto> Execute(RequestRegisterUserDto request);
+        Task<ResultDto<ResultRegisterUserDto>> Execute(RequestRegisterUserDto request);
+
     }
     public class RegisterUser : IRegisterUser
     {
@@ -25,7 +29,7 @@ namespace GymTest.Application.Services.Users.Command
         {
             _context = context;
         }
-        public ResultDto<ResultRegisterUserDto> Execute(RequestRegisterUserDto request)
+        public async Task <ResultDto<ResultRegisterUserDto>> Execute(RequestRegisterUserDto request)
         {
             try
             {
@@ -114,7 +118,7 @@ namespace GymTest.Application.Services.Users.Command
                     };
                 }
 
-                if (_context.Users.Any(p => p.Email.Equals(request.Email)))
+                if (await _context.Users.AnyAsync(p => p.Email.Equals(request.Email)))
                 {
                     return new ResultDto<ResultRegisterUserDto>()
                     {
@@ -139,7 +143,7 @@ namespace GymTest.Application.Services.Users.Command
                 };
 
                 _context.Users.Add(user);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
 
 
