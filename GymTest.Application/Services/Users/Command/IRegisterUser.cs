@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using static GymTest.Application.Services.Users.Command.UserRegister;
+using static GymTest.Application.Services.Users.Command.RegisterUser;
 
 namespace GymTest.Application.Services.Users.Command
 {
@@ -17,11 +17,11 @@ namespace GymTest.Application.Services.Users.Command
     {
         ResultDto<ResultRegisterUserDto> Execute(RequestRegisterUserDto request);
     }
-    public class UserRegister : IRegisterUser
+    public class RegisterUser : IRegisterUser
     {
 
         private readonly IDataBaseContext _context;
-        public UserRegister(IDataBaseContext context)
+        public RegisterUser(IDataBaseContext context)
         {
             _context = context;
         }
