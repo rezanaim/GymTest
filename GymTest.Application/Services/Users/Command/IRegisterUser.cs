@@ -12,7 +12,7 @@ using static GymTest.Application.Services.Users.Command.UserRegister;
 
 namespace GymTest.Application.Services.Users.Command
 {
-    interface IRegisterUser
+    public interface IRegisterUser
     {
         ResultDto<ResultRegisterUserto> Execute(RequestRegisterUserDto request);
     }
