@@ -99,7 +99,7 @@ namespace EndPoint.Site.Controllers
                     RePassword = request.RePassword,
                     Roles = new List<RoleInRegisterUserDto>()
                     {
-                        new RoleInRegisterUserDto{ Id = 3 },
+                        new RoleInRegisterUserDto{ /* Id = 3 */ },
                     }
                 });
 
@@ -111,7 +111,8 @@ namespace EndPoint.Site.Controllers
                         new Claim(ClaimTypes.NameIdentifier,registerResult.Data.UserId.ToString()),
                         new Claim(ClaimTypes.Name, $"{request.FirstName} {request.LastName}" ),
                         new Claim(ClaimTypes.Email, request.Email),
-                        new Claim(ClaimTypes.Role, "Customer")
+                        //Id = 3 Ignored becuz of this line:
+                        new Claim(ClaimTypes.Role, "Customer") 
                     };
 
 
@@ -126,31 +127,35 @@ namespace EndPoint.Site.Controllers
 
                 }
 
-                return Json(registerResult);
+                //return Json(registerResult);
 
-
-                // این پایینیا هم راهنمان
-
-                /*if (signeupResult.IsSuccess == true)
+                return Json(new ResultDto
                 {
-                    var claims = new List<Claim>()
+                IsSuccess = true,
+                Message = "ثبت نام و ورود با موفقیت انجام شد"
+                });
+            // این پایینیا هم راهنمان
+
+            /*if (signeupResult.IsSuccess == true)
+            {
+                var claims = new List<Claim>()
+            {
+            new Claim(ClaimTypes.NameIdentifier,signeupResult.Data.UserId.ToString()),
+            new Claim(ClaimTypes.Email, request.Email),
+            new Claim(ClaimTypes.Name, request.FullName),
+            new Claim(ClaimTypes.Role, "Customer"),
+            };
+
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+                var properties = new AuthenticationProperties()
                 {
-                new Claim(ClaimTypes.NameIdentifier,signeupResult.Data.UserId.ToString()),
-                new Claim(ClaimTypes.Email, request.Email),
-                new Claim(ClaimTypes.Name, request.FullName),
-                new Claim(ClaimTypes.Role, "Customer"),
+                    IsPersistent = true
                 };
+                HttpContext.SignInAsync(principal, properties); */
 
 
-                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var principal = new ClaimsPrincipal(identity);
-                    var properties = new AuthenticationProperties()
-                    {
-                        IsPersistent = true
-                    };
-                    HttpContext.SignInAsync(principal, properties); */
-
-            
 
             //return RedirectToAction("Index", "Home");
         }
