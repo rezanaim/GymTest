@@ -10,8 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GymTest.Persistence.Data;
-
-
+using GymTest.Application.Services.Users.Command;
 
 namespace EndPoint.Site
 
@@ -33,6 +32,8 @@ namespace EndPoint.Site
 
             string contectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
             services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+
+            services.AddScoped<IRegisterUser, RegisterUser>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
