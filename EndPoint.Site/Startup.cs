@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +14,7 @@ using GymTest.Application.Services.Users.Command;
 using GymTest.Application.Interfaces.Contexts;
 using Microsoft.AspNetCore.Identity;
 using GymTest.Domain.Entities.Users;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace EndPoint.Site
 
@@ -31,6 +32,22 @@ namespace EndPoint.Site
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // جیمینای
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }) .AddCookie(options =>
+{
+                    options.LoginPath = "/Account/Registe"; // آدرس صفحه لاگین (حتی اگر هنوز نساخته‌اید)
+                    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // مدت زمان اعتبار کوکی
+             });
+
+            //تا اینجا
+
+
+
             services.AddControllersWithViews();
 
             string contectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
@@ -58,6 +75,9 @@ namespace EndPoint.Site
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            // جیمینای
+            app.UseAuthentication();
 
             app.UseAuthorization();
 
