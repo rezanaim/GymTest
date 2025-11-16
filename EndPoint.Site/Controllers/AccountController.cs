@@ -103,17 +103,21 @@ namespace EndPoint.Site.Controllers
                     }
                 });
 
+                if (registerResult.IsSuccess == false)
+                {
+                    return Json(registerResult);
+                }
 
                 if (registerResult.IsSuccess == true)
-                {
-                    var claims = new List<Claim>()
                     {
-                        new Claim(ClaimTypes.NameIdentifier,registerResult.Data.UserId.ToString()),
-                        new Claim(ClaimTypes.Name, $"{request.FirstName} {request.LastName}" ),
-                        new Claim(ClaimTypes.Email, request.Email),
-                        //Id = 3 Ignored becuz of this line:
-                        new Claim(ClaimTypes.Role, "Customer") 
-                    };
+                        var claims = new List<Claim>()
+                        {
+                            new Claim(ClaimTypes.NameIdentifier,registerResult.Data.UserId.ToString()),
+                            new Claim(ClaimTypes.Name, $"{request.FirstName} {request.LastName}" ),
+                            new Claim(ClaimTypes.Email, request.Email),
+                            //Id = 3 Ignored becuz of this line:
+                            new Claim(ClaimTypes.Role, "Customer") 
+                        };
 
 
                     // ازینجا تا اخر این ایف کلا کپی از فروشگاه
