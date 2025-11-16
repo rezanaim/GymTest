@@ -1,8 +1,13 @@
-﻿using GymTest.Application.Services.Users.Command;
+﻿using Common;
+using GymTest.Application.Services.Users.Command;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 
@@ -29,17 +34,63 @@ namespace EndPoint.Site.Controllers
         {
 
 
-            {
+            
                 // ۱. بررسی قوانین اعتبارسنجی ساده (Data Annotations)
-                if (!ModelState.IsValid)
+                if (string.IsNullOrWhiteSpace(request.Email) ||
+                    string.IsNullOrWhiteSpace(request.FirstName) ||
+                    string.IsNullOrWhiteSpace(request.LastName) ||
+                    string.IsNullOrWhiteSpace(request.Password) ||
+                    string.IsNullOrWhiteSpace(request.RePassword))
                 {
-                    // اگر ورودی کاربر معتبر نیست (مثلاً پسورد کوتاه است)،
-                    // همان فرم را با پیام‌های خطا به او برگردان.
-                    return View(request);
+                    return Json(new ResultDto
+                    {
+                        IsSuccess = false,
+                        Message = "لطفا همه موارد را پر کنید",
+                    });
                 }
 
+                if (User.Identity.IsAuthenticated == true)
+                {
+                    return Json(new ResultDto()
+                    {
+                        IsSuccess = false,
+                        Message = "شما وارد حساب کاربری خود شده اید، و امکان ثبت نام مجدد نیست"
+                    });
+                }
+
+                if (request.Password != request.RePassword)
+                {
+                    return Json(new ResultDto()
+                    {
+                        IsSuccess = false,
+                        Message = "پسورد و تکرار آن، یکسان نیستند"
+                    });
+                }
+
+                if (request.Password.Length < 5)
+                {
+                    return Json(new ResultDto()
+                    {
+                        IsSuccess = false,
+                        Message = "پسورد باید حداقل 5 کاراکتر باشد"
+                    });
+                }
+
+                string emailRegex = @"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$";
+
+                var match = Regex.Match(request.Email, emailRegex, RegexOptions.IgnoreCase);
+
+                if (!match.Success)
+                {
+                    return Json(new ResultDto()
+                    {
+                        IsSuccess = false,
+                        Message = "لطفا یک ایمیل معتبر وارد کنید"
+                    });
+                }
+                // خ: اینا هم پیشنهاد جی پی تی بود و فعلا کامنت میشن
                 // ۲. فراخوانی سرویس برای اجرای منطق اصلی کسب‌وکار
-                var result = _register.Execute(new RequestRegisterUserDto()
+                var registerResult = _register.Execute(new RequestRegisterUserDto()
                 {
                     Email = request.Email,
                     FirstName = request.FirstName,
@@ -52,6 +103,33 @@ namespace EndPoint.Site.Controllers
                     }
                 });
 
+
+                if (registerResult.IsSuccess == true)
+                {
+                    var claims = new List<Claim>()
+                    {
+                        new Claim(ClaimTypes.NameIdentifier,registerResult.Data.UserId.ToString()),
+                        new Claim(ClaimTypes.Name, $"{request.FirstName} {request.LastName}" ),
+                        new Claim(ClaimTypes.Email, request.Email),
+                        new Claim(ClaimTypes.Role, "Customer")
+                    };
+
+
+                    // ازینجا تا اخر این ایف کلا کپی از فروشگاه
+                    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var principal = new ClaimsPrincipal(identity);
+                    var properties = new AuthenticationProperties()
+                    {
+                        IsPersistent = true
+                    };
+                    HttpContext.SignInAsync(principal, properties);
+
+                }
+
+                return Json(registerResult);
+
+
+                // این پایینیا هم راهنمان
 
                 /*if (signeupResult.IsSuccess == true)
                 {
@@ -72,23 +150,7 @@ namespace EndPoint.Site.Controllers
                     };
                     HttpContext.SignInAsync(principal, properties); */
 
-                    // ۳. تصمیم‌گیری بر اساس نتیجه‌ای که از سرویس برگشته
-                    if (result.IsSuccess)
-                    {
-                    // اگر ثبت‌نام موفقیت‌آمیز بود، کاربر را به صفحه اصلی سایت هدایت کن.
-                    return RedirectToAction("Index", "Home");
-                    }
-                    else
-                    {
-                    // اگر سرویس با یک خطای کسب‌وکار مواجه شد (مثلاً ایمیل تکراری)،
-                    // آن پیام خطا را به کاربر نمایش بده و دوباره فرم را نشان بده.
-                    foreach (var item in result.Message.Split(','))
-                    {
-                        ModelState.AddModelError(string.Empty, item);
-                    }
-                        return View(request);
-                    }
-            }
+            
 
             //return RedirectToAction("Index", "Home");
         }
