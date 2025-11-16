@@ -6,8 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
-
-
+using System.Threading;
 
 namespace GymTest.Application.Interfaces.Contexts
 {
@@ -17,6 +16,7 @@ namespace GymTest.Application.Interfaces.Contexts
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInRole> UserInRoles { get; set; }
 
-
+        int SaveChanges();
+        //Task<int> SaveChangeAsync();
     }
 }

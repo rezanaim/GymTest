@@ -20,5 +20,8 @@ namespace GymTest.Persistence.Data
         //DbSet<User> IDataBaseContext.Users { get; set; }
 
         //DbSet<User> IDataBaseContext.Users { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+
     }
+
 }
