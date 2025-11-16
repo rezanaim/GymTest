@@ -73,7 +73,7 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (string.IsNullOrWhiteSpace(request.Password))
                 {
-                    new ResultDto<ResultRegisterUserDto>()
+                    return new ResultDto<ResultRegisterUserDto>()
                     {
                         Data = new ResultRegisterUserDto()
                         {
@@ -86,7 +86,7 @@ namespace GymTest.Application.Services.Users.Command
 
                 if (request.Password != request.RePassword)
                 {
-                    new ResultDto<ResultRegisterUserDto>()
+                    return new ResultDto<ResultRegisterUserDto>()
                     {
                         Data = new ResultRegisterUserDto()
                         {
@@ -114,9 +114,22 @@ namespace GymTest.Application.Services.Users.Command
                     };
                 }
 
+                if (_context.Users.Any(p => p.Email.Equals(request.Email)))
+                {
+                    return new ResultDto<ResultRegisterUserDto>()
+                    {
+                        Data = new ResultRegisterUserDto()
+                        {
+                            UserId = 0,
+                        },
+                        IsSuccess = false,
+                        Message = "قبلا با ای ایمیل ثبت نام شده است "
+                    };
+                }
+
                 var passwordHasher = new PasswordHasher();
                 var hashedPassword = passwordHasher.HashPassword(request.Password);
-                var User = new User()
+                var user = new User()
                 {
                     Email = request.Email,
                     FirstName = request.FirstName,
@@ -125,8 +138,17 @@ namespace GymTest.Application.Services.Users.Command
                     IsActive = true,
                 };
 
-                var userInRoles = new List<UserInRole>();
+                _context.Users.Add(user);
+                _context.SaveChanges();
 
+
+
+                // فریچ مرگبار - این حلقه لیستش خالیه و هیچوقت سیو چنج و.. نمیشه
+                // ضمن اینکه اگه خالی نبود اصلا منطقشم درست نیست و نباید اینجوری باشه
+
+                /*
+                var userInRoles = new List<UserInRole>();
+                
                 foreach (var item in userInRoles)
                 {
                     var role = _context.Roles.Find();
@@ -143,12 +165,12 @@ namespace GymTest.Application.Services.Users.Command
                     _context.Users.Add(User);
                     _context.SaveChanges();
 
-                }
+                }*/
                 return new ResultDto<ResultRegisterUserDto>()
                 {
                     Data = new ResultRegisterUserDto()
                     {
-                        UserId = User.Id,
+                        UserId = user.Id,
                     },
                     IsSuccess = true,
                     Message = "ثبت نام با وفقیت انجام شد"
