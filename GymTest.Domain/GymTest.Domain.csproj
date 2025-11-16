@@ -8,8 +8,4 @@
     <ProjectReference Include="..\Common\GymTest.Common.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Entities\Commons\" />
-  </ItemGroup>
-
 </Project>
