@@ -188,7 +188,7 @@ namespace GymTest.Application.Services.Users.Command
         }
         public class RoleInRegisterUserDto
         {
-            public string Id { get; set; }
+            public long Id { get; set; }
         }
 
         public class ResultRegisterUserDto
