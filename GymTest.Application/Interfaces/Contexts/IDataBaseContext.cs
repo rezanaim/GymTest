@@ -16,7 +16,7 @@ namespace GymTest.Application.Interfaces.Contexts
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInRole> UserInRoles { get; set; }
 
-        int SaveChanges();
+        //int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

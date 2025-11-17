@@ -127,7 +127,7 @@ namespace EndPoint.Site.Controllers
                     {
                         IsPersistent = true
                     };
-                    await HttpContext.SignInAsync(principal, properties);
+                    //await HttpContext.SignInAsync(principal, properties);
 
                 }
 

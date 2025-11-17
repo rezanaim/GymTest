@@ -51,9 +51,17 @@ namespace EndPoint.Site
             services.AddControllersWithViews();
 
             string contectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
-            services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+            //services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
 
-            services.AddScoped<IDataBaseContext, DataBaseContext>();
+            //services.AddScoped<IDataBaseContext, DataBaseContext>();
+
+            // ۱. ابتدا DbContext را ثبت می‌کنیم
+            services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+
+            // ۲. سپس به DI می‌گوییم که برای IDataBaseContext از همان نمونه ثبت شده استفاده کند
+            services.AddScoped<IDataBaseContext>(provider => provider.GetService<DataBaseContext>());
+
+
             services.AddScoped<IRegisterUser, RegisterUser>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
