@@ -32,7 +32,9 @@ namespace EndPoint.Site
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
             // جیمینای
+            /*
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -43,7 +45,7 @@ namespace EndPoint.Site
                     options.LoginPath = "/Account/Registe"; // آدرس صفحه لاگین (حتی اگر هنوز نساخته‌اید)
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // مدت زمان اعتبار کوکی
              });
-
+            */
             //تا اینجا
 
 
@@ -51,17 +53,17 @@ namespace EndPoint.Site
             services.AddControllersWithViews();
 
             string contectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
-            //services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+            services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
 
-            //services.AddScoped<IDataBaseContext, DataBaseContext>();
+            services.AddScoped<IDataBaseContext, DataBaseContext>();
 
             // ۱. ابتدا DbContext را ثبت می‌کنیم
-            services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+            //services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
 
             // ۲. سپس به DI می‌گوییم که برای IDataBaseContext از همان نمونه ثبت شده استفاده کند
-            services.AddScoped<IDataBaseContext>(provider => provider.GetService<DataBaseContext>());
+            //services.AddScoped<IDataBaseContext>(provider => provider.GetService<DataBaseContext>());
 
-
+            services.AddScoped<IDataBaseContext, DataBaseContext>();
             services.AddScoped<IRegisterUser, RegisterUser>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
