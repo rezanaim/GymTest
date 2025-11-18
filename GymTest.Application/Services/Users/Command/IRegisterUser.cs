@@ -144,11 +144,12 @@ namespace GymTest.Application.Services.Users.Command
                 
                 _context.Users.Add(user);
 
-                var useInRole = new UserInRole()
+                var userInRole = new UserInRole()
                 {
                     User = user,
-                    RoleId = 3
+                    RoleId = 3,
                 };
+                _context.UserInRoles.Add(userInRole);
                 await _context.SaveChangesAsync();
 
 
