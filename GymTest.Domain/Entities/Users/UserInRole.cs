@@ -5,7 +5,7 @@ namespace GymTest.Domain.Entities.Users
 {
     public class UserInRole : BaseEntity
     {
-        public long Id { get; set; }
+        //public long Id { get; set; }
 
         // Relation with User Table
         public virtual User User { get; set; }
