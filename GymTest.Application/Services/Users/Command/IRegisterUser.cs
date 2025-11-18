@@ -141,8 +141,14 @@ namespace GymTest.Application.Services.Users.Command
                     Password = hashedPassword,
                     IsActive = true,
                 };
-
+                
                 _context.Users.Add(user);
+
+                var useInRole = new UserInRole()
+                {
+                    User = user,
+                    RoleId = 3
+                };
                 await _context.SaveChangesAsync();
 
 
