@@ -65,6 +65,7 @@ namespace EndPoint.Site
 
             services.AddScoped<IDataBaseContext, DataBaseContext>();
             services.AddScoped<IRegisterUser, RegisterUser>();
+            services.AddScoped<ILoginUser, LoginUser>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
 
