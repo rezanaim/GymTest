@@ -217,7 +217,7 @@ namespace EndPoint.Site.Controllers
 
 
             //temp return
-            return null;
+            return Json(resultLogin);
         }
     }
 }
