@@ -9,17 +9,20 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using static GymTest.Application.Services.Users.Command.LoginUser;
 
 namespace EndPoint.Site.Controllers
 {
     public class AccountController : Controller
     {
         private readonly IRegisterUser _register;
+        private readonly ILoginUser _login;
 
-        public AccountController(IRegisterUser register)
+        public AccountController(IRegisterUser register, ILoginUser login)
         {
+
             _register = register;
+            _login = login;
         }
 
 
@@ -158,6 +161,63 @@ namespace EndPoint.Site.Controllers
 
 
             //return RedirectToAction("Index", "Home");
+        }
+
+
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(RequestLoginUserDto request)
+        {
+            var resultLogin = _login.Execute(new RequestLoginUserDto()
+            {
+                Email = request.Email,
+                Password = request.Password
+            });
+
+            var claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, resultLogin.Data.UserId.ToString()),
+                //new Claim(ClaimTypes.Role, resultLogin.Data.Role.ToString()),
+                new Claim(ClaimTypes.Name, $"{resultLogin.Data.FirstName} {resultLogin.Data.LastName}"),
+
+                new Claim(ClaimTypes.Email, resultLogin.Data.Email),
+                
+                //foreach(var item in UserInRole.)
+
+            };
+
+            foreach (var item in resultLogin.Data.Roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, item));
+            }
+
+            // ۱. ساخت هویت کاربر (کارت شناسایی) بر اساس کلیم‌ها و با استفاده از طرح احراز هویت کوکی.
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // ۲. ساخت هویت اصلی کاربر (کیف پول) که شامل کارت شناسایی اوست.
+            var principal = new ClaimsPrincipal(identity);
+
+            // ۳. تعریف ویژگی‌های کوکی، مانند ماندگاری (Remember Me) و تاریخ انقضا.
+            var properties = new AuthenticationProperties()
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTime.Now.AddDays(5),
+            };
+
+            
+            // ۴. انجام عمل لاگین: رمزنگاری هویت کاربر در یک کوکی و ارسال آن به مرورگر.
+            // اویت ر پاکیدم
+            HttpContext.SignInAsync(principal, properties);
+
+
+
+            //temp return
+            return null;
         }
     }
 }
