@@ -120,7 +120,7 @@ namespace GymTest.Application.Services.Users.Command
                 Message = "لاگین با موفقیت انجام شد",
                 Data = new ResultLoginUserDto()
                 {
-                    Role = roles,
+                    Roles = roles,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     UserId = user.Id,
