@@ -64,11 +64,13 @@ namespace GymTest.Application.Services.Users.Command
             // و کاربر اکتیوه و... رو فرست اور دیفالت کن
             // اگه یوزر نال بود که بیا بیا ارور بده بگو ثبت نام نکردی
 
+            
             var user = _context.Users
                 .Include(p => p.UserInRoles)
                 .ThenInclude(p => p.Role)
                 .Where(p => p.Email.Equals(request.Email)
                 && p.IsActive == true).FirstOrDefault();
+            
 
             if (user == null)
             {
@@ -86,10 +88,37 @@ namespace GymTest.Application.Services.Users.Command
             //اگه اوکی بود بیا  چک ک ایا پسورد وارد شده درسته یا نه
             // اگه نبود دوباره ارور که رمزت ریده
 
+
+
+            /*
             var passwordHasher = new PasswordHasher();
             var hashedRequestPassword = passwordHasher.HashPassword(request.Password);
             
             if (hashedRequestPassword != user.Password)
+            {
+                return new ResultDto<ResultLoginUserDto>()
+                {
+                    IsSuccess = false,
+                    Message = "پسورد وارد شده اشتباه است",
+                    Data = new ResultLoginUserDto()
+                    {
+                        //UserId = 0,
+                    }
+                };
+            }
+            */
+
+            // چک کردن پسورد به شکل بالا اشتباهه. دلیل؟
+            // چون ما از رمزنگاری کاستوم و خاصی استفاده کردیم
+            // برخلاف بعضی روش های ساده. اگر ما یک متن ایکس رو به عنوان پسورد در نظر بگیریم
+            // هش شده ایکس.  برابر با  هش شده ایکس نیست
+            // با این که ماده اولیه یکیه ولی هر بار هش کنی یه هش جدید و یونیک برات میسازیه ازش
+            // راه هل؟ متد وریفای خودش
+
+            var passwordHasher = new PasswordHasher();
+            var vefifyPassword = passwordHasher.VerifyPassword(user.Password, request.Password);
+
+            if (vefifyPassword == false)
             {
                 return new ResultDto<ResultLoginUserDto>()
                 {
