@@ -179,6 +179,14 @@ namespace EndPoint.Site.Controllers
                 Password = request.Password
             });
 
+
+            // ۲. بررسی نتیجه سرویس (مهم‌ترین بخش)
+            if (resultLogin.IsSuccess == false)
+            {
+                // اگر لاگین ناموفق بود، نتیجه خطا را برگردان و از ادامه کار جلوگیری کن
+                return Json(resultLogin);
+            }
+
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.NameIdentifier, resultLogin.Data.UserId.ToString()),
