@@ -227,5 +227,14 @@ namespace EndPoint.Site.Controllers
             //temp return
             return Json(resultLogin);
         }
+
+
+        public IActionResult Logout()
+        {
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction("Index", "Home"); 
+
+        }
     }
 }
