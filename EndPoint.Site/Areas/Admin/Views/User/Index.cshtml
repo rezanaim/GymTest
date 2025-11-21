@@ -1,59 +1,43 @@
-﻿@using GymTest.Application.Services.Users.Query.GetUser
-@model ResultGetUserDto
+﻿@model ResultGetUserDto
 @{
-    // استفاده از Layout ساده برای تست اولیه. بعداً می‌توانید آن را با Layout اصلی جایگزین کنید.
-    Layout = null;
     ViewData["Title"] = "لیست کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
-    // --- خواندن پارامترها از URL برای استفاده در ویو ---
-    int.TryParse(Context.Request.Query["page"], out int currentPage);
-    if (currentPage == 0) { currentPage = 1; }
-
-    var searchKey = Context.Request.Query["searchKey"];
-
+    // --- محاسبات برای صفحه‌بندی ---
     int pageSize = 5; // این باید با pageSize در سرویس شما یکسان باشد
-    int pageCount = 0;
-    if (Model != null)
+    int currentPage = 1;
+    if (Context.Request.Query.ContainsKey("page"))
     {
-        pageCount = (int)Math.Ceiling((double)Model.TotalRows / pageSize);
+        int.TryParse(Context.Request.Query["page"], out currentPage);
     }
+    var searchKey = Context.Request.Query["searchKey"];
+    int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 0;
 }
 
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"]</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
-        <h2>مدیریت کاربران</h2>
-        <hr />
+<div class="card">
+    <div class="card-header">
+        <h5>لیست کاربران سیستم</h5>
+    </div>
+    <div class="card-body">
 
-        <!-- فرم جستجو -->
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <form method="get">
-                    <div class="input-group">
-                        <input type="text" name="searchKey" class="form-control" placeholder="جستجو..." value="@searchKey">
-                        <button class="btn btn-primary" type="submit">بگرد</button>
-                    </div>
-                </form>
+        <form method="get" class="row g-3 mb-4 align-items-center">
+            <div class="col-auto">
+                <input type="text" name="searchKey" class="form-control" placeholder="جستجو..." value="@searchKey">
             </div>
-        </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary">بگرد</button>
+            </div>
+        </form>
 
-        <!-- جدول کاربران -->
-        @if (Model != null && Model.Users.Any())
-        {
-            <table class="table table-bordered table-striped">
-                <thead class="table-dark">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered">
+                <thead>
                     <tr>
                         <th>شناسه</th>
                         <th>نام کامل</th>
                         <th>ایمیل</th>
                         <th>نقش‌ها</th>
+                        <th>وضعیت</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,33 +47,31 @@
                             <td>@user.UserId</td>
                             <td>@user.FirstName @user.LastName</td>
                             <td>@user.Email</td>
-                            <td>@string.Join(", ", user.Roles)</td>
+                            <td>@string.Join("، ", user.Roles)</td>
+                            <td>
+                                @if (user.IsActive)
+                                {<span class="badge bg-success">فعال</span> }
+                                else
+                                { <span class="badge bg-danger">غیرفعال</span>}
+                            </td>
                         </tr>
                     }
                 </tbody>
             </table>
+        </div>
 
-            <!-- صفحه‌بندی -->
-            @if (pageCount > 1)
-            {
-                <nav>
-                    <ul class="pagination justify-content-center">
-                        @for (int i = 1; i <= pageCount; i++)
-                        {
-                            <li class="page-item @(i == currentPage ? "active" : "")">
-                                <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchKey="@searchKey">@i</a>
-                            </li>
-                        }
-                    </ul>
-                </nav>
-            }
-        }
-        else
+        @if (pageCount > 1)
         {
-            <div class="alert alert-warning">
-                هیچ کاربری برای نمایش یافت نشد.
-            </div>
+            <nav class="d-flex justify-content-center">
+                <ul class="pagination">
+                    @for (int i = 1; i <= pageCount; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchKey="@searchKey">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         }
     </div>
-</body>
-</html>
+</div>
