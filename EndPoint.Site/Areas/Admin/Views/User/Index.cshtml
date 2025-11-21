@@ -1,36 +1,40 @@
 ﻿@model ResultGetUserDto
 @{
     ViewData["Title"] = "لیست کاربران";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; // فرض می‌کنیم Layout شما درست است
 
     // --- محاسبات برای صفحه‌بندی ---
-    int pageSize = 5; // این باید با pageSize در سرویس شما یکسان باشد
+    int pageSize = 5;
     int currentPage = 1;
     if (Context.Request.Query.ContainsKey("page"))
     {
         int.TryParse(Context.Request.Query["page"], out currentPage);
     }
     var searchKey = Context.Request.Query["searchKey"];
-    int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 0;
+    int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
 }
 
-<div class="card">
+<div class="card shadow-sm">
     <div class="card-header">
-        <h5>لیست کاربران سیستم</h5>
+        <h5 class="mb-0">لیست کاربران سیستم</h5>
     </div>
     <div class="card-body">
 
-        <form method="get" class="row g-3 mb-4 align-items-center">
-            <div class="col-auto">
-                <input type="text" name="searchKey" class="form-control" placeholder="جستجو..." value="@searchKey">
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">بگرد</button>
+        <!-- فرم جستجو باید آدرس اکشن را به صورت دستی داشته باشد -->
+        <form action="/Admin/User/Index" method="get" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" name="searchKey" class="form-control" placeholder="جستجو..." value="@searchKey">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> بگرد
+                    </button>
+                </div>
             </div>
         </form>
 
         <div class="table-responsive">
-            <table class="table table-striped table-bordered">
+            <table class="table table-bordered table-hover">
+                <!-- ... محتوای جدول شما (بدون تغییر) ... -->
                 <thead>
                     <tr>
                         <th>شناسه</th>
@@ -60,18 +64,25 @@
             </table>
         </div>
 
+        <!-- ================== بخش صفحه‌بندی با URL دستی ================== -->
         @if (pageCount > 1)
         {
-            <nav class="d-flex justify-content-center">
+            <nav class="d-flex justify-content-center mt-4">
                 <ul class="pagination">
                     @for (int i = 1; i <= pageCount; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchKey="@searchKey">@i</a>
+                            @{
+                                // ساخت URL به صورت دستی و کامل
+                                var url = $"/Admin/User/Index?page={i}&searchKey={searchKey}";
+                            }
+                            <a class="page-link" href="@url">@i</a>
                         </li>
                     }
                 </ul>
             </nav>
         }
+        <!-- ============================================================= -->
+
     </div>
 </div>
