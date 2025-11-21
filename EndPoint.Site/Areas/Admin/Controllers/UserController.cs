@@ -19,6 +19,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
 
 
         // GET: UserController1
+        [Area("Admin")]
         public ActionResult Index(string searchKey = "", int pageNumber = 1)
         {
             var request = new RequestGetUserDto()
