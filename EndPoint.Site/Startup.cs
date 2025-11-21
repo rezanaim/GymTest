@@ -96,6 +96,14 @@ namespace EndPoint.Site
 
             app.UseEndpoints(endpoints =>
             {
+
+                // این روت جدید، URL هایی که با نام یک Area شروع می‌شوند را مدیریت می‌کند
+                endpoints.MapControllerRoute(
+                  name: "areas",
+                  pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+                );
+
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
