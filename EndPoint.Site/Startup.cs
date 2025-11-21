@@ -15,6 +15,7 @@ using GymTest.Application.Interfaces.Contexts;
 using Microsoft.AspNetCore.Identity;
 using GymTest.Domain.Entities.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
+//using GymTest.Application.Services.Users.Query.IGetUser;
 using GymTest.Application.Services.Users.Query.GetUser;
 
 namespace EndPoint.Site
@@ -67,7 +68,7 @@ namespace EndPoint.Site
             services.AddScoped<IDataBaseContext, DataBaseContext>();
             services.AddScoped<IRegisterUser, RegisterUser>();
             services.AddScoped<ILoginUser, LoginUser>();
-            services.AddScoped<GetUser, GetUser>();
+            services.AddScoped<IGetUsers, GetUser>();
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
 
