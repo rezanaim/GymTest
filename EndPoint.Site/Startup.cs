@@ -31,47 +31,76 @@ namespace EndPoint.Site
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
-            
-            // جیمینای
-            /*
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            }) .AddCookie(options =>
-{
-                    options.LoginPath = "/Account/Registe"; // آدرس صفحه لاگین (حتی اگر هنوز نساخته‌اید)
-                    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // مدت زمان اعتبار کوکی
-             });
-            */
-            //تا اینجا
-
-
+            })
+            .AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            });
 
             services.AddControllersWithViews();
 
-            string contectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
-            services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+            string connectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
 
-            services.AddScoped<IDataBaseContext, DataBaseContext>();
+            // فقط این دو خط برای دیتابیس
+            services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(connectionString));
+            services.AddScoped<IDataBaseContext>(provider => provider.GetService<DataBaseContext>());
 
-            // ۱. ابتدا DbContext را ثبت می‌کنیم
-            //services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
-
-            // ۲. سپس به DI می‌گوییم که برای IDataBaseContext از همان نمونه ثبت شده استفاده کند
-            //services.AddScoped<IDataBaseContext>(provider => provider.GetService<DataBaseContext>());
-
-            services.AddScoped<IDataBaseContext, DataBaseContext>();
+            // ثبت سرویس‌ها
             services.AddScoped<IRegisterUser, RegisterUser>();
             services.AddScoped<ILoginUser, LoginUser>();
             services.AddScoped<IGetUsers, GetUser>();
-            services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
         }
+        // This method gets called by the runtime. Use this method to add services to the container.
+        /*
+         public void ConfigureServices(IServiceCollection services)
+         {خ
 
+             // جیمینای
+
+             services.AddAuthentication(options =>
+             {
+                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                 options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+             }).AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login"; // آدرس صفحه لاگین (حتی اگر هنوز نساخته‌اید)
+                 options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // مدت زمان اعتبار کوکی
+             });
+
+             //تا اینجا
+
+
+
+             services.AddControllersWithViews();
+
+             string contectionString = @"Data Source=DESKTOP-7SQIRAD; Initial Catalog=GymDB; Integrated Security=True;";
+             services.AddEntityFrameworkSqlServer().AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+
+             services.AddScoped<IDataBaseContext, DataBaseContext>();
+
+             // ۱. ابتدا DbContext را ثبت می‌کنیم
+             //services.AddDbContext<DataBaseContext>(option => option.UseSqlServer(contectionString));
+
+             // ۲. سپس به DI می‌گوییم که برای IDataBaseContext از همان نمونه ثبت شده استفاده کند
+             //services.AddScoped<IDataBaseContext>(provider => provider.GetService<DataBaseContext>());
+
+             //services.AddScoped<IDataBaseContext, DataBaseContext>();
+             services.AddScoped<IRegisterUser, RegisterUser>();
+             services.AddScoped<ILoginUser, LoginUser>();
+             services.AddScoped<IGetUsers, GetUser>();
+             //services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+         }
+         */
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -95,20 +124,23 @@ namespace EndPoint.Site
 
             app.UseAuthorization();
 
+
+
             app.UseEndpoints(endpoints =>
             {
-
-                // این روت جدید، URL هایی که با نام یک Area شروع می‌شوند را مدیریت می‌کند
-                endpoints.MapControllerRoute(
+                    // ۱. این الگو باید اول باشد تا URLهای شامل Area را مدیریت کند
+                    endpoints.MapControllerRoute(
                   name: "areas",
                   pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );
 
-
-                endpoints.MapControllerRoute(
+                    // ۲. این الگوی پیش‌فرض، برای URLهای بدون Area است و باید دوم باشد
+                    endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
             });
+
         }
     }
 }
+
