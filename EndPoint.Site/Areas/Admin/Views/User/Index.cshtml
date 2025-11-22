@@ -1,7 +1,7 @@
 ﻿@model ResultGetUserDto
 @{
     ViewData["Title"] = "لیست کاربران";
-    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; // فرض می‌کنیم Layout شما درست است
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
     // --- محاسبات برای صفحه‌بندی ---
     int pageSize = 5;
@@ -20,7 +20,6 @@
     </div>
     <div class="card-body">
 
-        <!-- فرم جستجو باید آدرس اکشن را به صورت دستی داشته باشد -->
         <form action="/Admin/User/Index" method="get" class="row g-3 mb-4">
             <div class="col-md-6">
                 <div class="input-group">
@@ -34,7 +33,6 @@
 
         <div class="table-responsive">
             <table class="table table-bordered table-hover">
-                <!-- ... محتوای جدول شما (بدون تغییر) ... -->
                 <thead>
                     <tr>
                         <th>شناسه</th>
@@ -42,47 +40,140 @@
                         <th>ایمیل</th>
                         <th>نقش‌ها</th>
                         <th>وضعیت</th>
+                        <th>عملیات</th> <!-- ۱. ستون جدید -->
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var user in Model.Users)
                     {
-                        <tr>
-                            <td>@user.UserId</td>
-                            <td>@user.FirstName @user.LastName</td>
-                            <td>@user.Email</td>
-                            <td>@string.Join("، ", user.Roles)</td>
-                            <td>
-                                @if (user.IsActive)
+                    <tr id="userRow_@user.UserId">
+                        <!-- ۲. ID برای ردیف -->
+                        <td>@user.UserId</td>
+                        <td>@user.FirstName @user.LastName</td>
+                        <td>@user.Email</td>
+                        <td>@string.Join("، ", user.Roles)</td>
+                        <td>
+                            @if (user.IsActive)
                                 {<span class="badge bg-success">فعال</span> }
                                 else
                                 { <span class="badge bg-danger">غیرفعال</span>}
-                            </td>
-                        </tr>
+                        </td>
+                        <td>
+                            <!-- ۳. سلول جدید برای دکمه‌ها -->
+                            <div class="btn-group btn-group-sm">
+                                <a href="#" class="btn btn-outline-warning">ویرایش</a>
+                                <button class="btn btn-outline-danger js-delete-user"
+                                        data-user-id="@user.UserId"
+                                        data-user-name="@user.FirstName @user.LastName">
+                                    حذف
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
                     }
                 </tbody>
             </table>
         </div>
 
-        <!-- ================== بخش صفحه‌بندی با URL دستی ================== -->
         @if (pageCount > 1)
         {
-            <nav class="d-flex justify-content-center mt-4">
-                <ul class="pagination">
-                    @for (int i = 1; i <= pageCount; i++)
+        <nav class="d-flex justify-content-center mt-4">
+            <ul class="pagination">
+                @for (int i = 1; i <= pageCount; i++)
                     {
-                        <li class="page-item @(i == currentPage ? "active" : "")">
-                            @{
-                                // ساخت URL به صورت دستی و کامل
+                <li class="page-item @(i == currentPage ? "active" : "")">
+                    @{
                                 var url = $"/Admin/User/Index?page={i}&searchKey={searchKey}";
-                            }
-                            <a class="page-link" href="@url">@i</a>
-                        </li>
                     }
-                </ul>
-            </nav>
+                    <a class="page-link" href="@url">@i</a>
+                </li>
+                    }
+            </ul>
+        </nav>
         }
-        <!-- ============================================================= -->
-
     </div>
 </div>
+
+
+<!-- ۴. کد HTML برای Modal (پاپ‌آپ) -->
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تایید حذف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                آیا از حذف کاربر <strong id="userNameToDelete"></strong> اطمینان دارید؟
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteButton">بله، حذف کن</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ۵. کد JavaScript برای مدیریت حذف -->
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var deleteModalElement = document.getElementById('deleteConfirmationModal');
+            if (!deleteModalElement) return;
+
+            var deleteModal = new bootstrap.Modal(deleteModalElement);
+            var confirmDeleteButton = document.getElementById('confirmDeleteButton');
+            var userNameToDeleteSpan = document.getElementById('userNameToDelete');
+            var userIdToDelete = null;
+
+            document.querySelectorAll('.js-delete-user').forEach(function (button) {
+                button.addEventListener('click', function () {
+                    userIdToDelete = this.getAttribute('data-user-id');
+                    var userName = this.getAttribute('data-user-name');
+
+                    userNameToDeleteSpan.textContent = `"${userName}"`;
+                    deleteModal.show();
+                });
+            });
+
+            confirmDeleteButton.addEventListener('click', function () {
+                if (userIdToDelete) {
+                    // ارسال درخواست POST به اکشن Delete
+                    fetch(`/Admin/User/Delete/${userIdToDelete}`, {
+                        method: 'POST',
+                        headers: {
+                            // AntiForgeryToken در صورت نیاز اینجا اضافه می‌شود
+                        }
+                    })
+                        .then(response => {
+                            // بررسی اینکه آیا پاسخ موفقیت‌آمیز است یا نه
+                            if (!response.ok) {
+                                // اگر 404 یا 500 بود، خطا را پرتاب کن
+                                throw new Error(`خطای شبکه: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.isSuccess) {
+                                var rowToDelete = document.getElementById(`userRow_${userIdToDelete}`);
+                                if (rowToDelete) {
+                                    rowToDelete.remove();
+                                }
+                                alert(data.message);
+                            } else {
+                                alert(`خطا: ${data.message}`);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            alert('خطایی در ارتباط با سرور رخ داد.');
+                        })
+                        .finally(() => {
+                            deleteModal.hide();
+                        });
+                }
+            });
+        });
+    </script>
+}

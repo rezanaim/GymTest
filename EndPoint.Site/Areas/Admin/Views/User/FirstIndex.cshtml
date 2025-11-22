@@ -1,0 +1,88 @@
+﻿@model ResultGetUserDto
+@{
+    ViewData["Title"] = "لیست کاربران";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml"; // فرض می‌کنیم Layout شما درست است
+
+    // --- محاسبات برای صفحه‌بندی ---
+    int pageSize = 5;
+    int currentPage = 1;
+    if (Context.Request.Query.ContainsKey("page"))
+    {
+        int.TryParse(Context.Request.Query["page"], out currentPage);
+    }
+    var searchKey = Context.Request.Query["searchKey"];
+    int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
+}
+
+<div class="card shadow-sm">
+    <div class="card-header">
+        <h5 class="mb-0">لیست کاربران سیستم</h5>
+    </div>
+    <div class="card-body">
+
+        <!-- فرم جستجو باید آدرس اکشن را به صورت دستی داشته باشد -->
+        <form action="/Admin/User/Index" method="get" class="row g-3 mb-4">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <input type="text" name="searchKey" class="form-control" placeholder="جستجو..." value="@searchKey">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> بگرد
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+                <!-- ... محتوای جدول شما (بدون تغییر) ... -->
+                <thead>
+                    <tr>
+                        <th>شناسه</th>
+                        <th>نام کامل</th>
+                        <th>ایمیل</th>
+                        <th>نقش‌ها</th>
+                        <th>وضعیت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in Model.Users)
+                    {
+                        <tr>
+                            <td>@user.UserId</td>
+                            <td>@user.FirstName @user.LastName</td>
+                            <td>@user.Email</td>
+                            <td>@string.Join("، ", user.Roles)</td>
+                            <td>
+                                @if (user.IsActive)
+                                {<span class="badge bg-success">فعال</span> }
+                                else
+                                { <span class="badge bg-danger">غیرفعال</span>}
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ================== بخش صفحه‌بندی با URL دستی ================== -->
+        @if (pageCount > 1)
+        {
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination">
+                    @for (int i = 1; i <= pageCount; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            @{
+                                // ساخت URL به صورت دستی و کامل
+                                var url = $"/Admin/User/Index?page={i}&searchKey={searchKey}";
+                            }
+                            <a class="page-link" href="@url">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+        <!-- ============================================================= -->
+
+    </div>
+</div>
