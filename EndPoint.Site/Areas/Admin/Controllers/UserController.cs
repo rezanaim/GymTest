@@ -1,4 +1,5 @@
-﻿using GymTest.Application.Services.Users.Query;
+﻿using GymTest.Application.Services.Users.Command;
+using GymTest.Application.Services.Users.Query;
 using GymTest.Application.Services.Users.Query.GetUser;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,17 +10,21 @@ using System.Threading.Tasks;
 
 namespace EndPoint.Site.Areas.Admin.Controllers
 {
+
+    [Area("Admin")]
     public class UserController : Controller
     {
         private readonly IGetUsers _getUsers;
-        public UserController(IGetUsers getUsers)
+        private readonly IDeleteUser _deleteUser;
+        public UserController(IGetUsers getUsers, IDeleteUser deleteUser)
         {
             _getUsers = getUsers;
+            _deleteUser = deleteUser;
         }
 
 
         // GET: UserController1
-        [Area("Admin")]
+        
         public ActionResult Index(string searchKey = "", int page = 1)
         {
             var request = new RequestGetUserDto()
@@ -80,24 +85,26 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: UserController1/Delete/5
+        /*
         public ActionResult Delete(int id)
         {
             return View();
         }
-
+        */
         // POST: UserController1/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        
+        public ActionResult Delete(long id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+
+                var result = _deleteUser.Execute(new RequestDeleteDto()
+                {
+                    UserId = id
+                });
+
+                return Json(result);
+
         }
     }
 }
