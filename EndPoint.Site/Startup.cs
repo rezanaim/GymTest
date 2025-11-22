@@ -58,6 +58,7 @@ namespace EndPoint.Site
             services.AddScoped<IRegisterUser, RegisterUser>();
             services.AddScoped<ILoginUser, LoginUser>();
             services.AddScoped<IGetUsers, GetUser>();
+            services.AddScoped<IDeleteUser, DeleteUser>();
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         /*
