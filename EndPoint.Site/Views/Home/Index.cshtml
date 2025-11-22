@@ -1,8 +1,53 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "صفحه اصلی";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<!-- بخش هدر اصلی سایت (Hero Section) -->
+<header class="text-center bg-dark text-white p-5 mb-4 rounded-3">
+    <div class="container">
+        <h1 class="display-4 fw-bold">به باشگاه ورزشی ما خوش آمدید</h1>
+        <p class="lead col-md-8 mx-auto">
+            بهترین دوره‌های آموزشی را با مربیان حرفه‌ای تجربه کنید. از بدنسازی و فیتنس گرفته تا یوگا و پیلاتس، ما شما را در مسیر رسیدن به اهداف‌تان همراهی می‌کنیم.
+        </p>
+        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+            <a href="#courses" class="btn btn-primary btn-lg px-4 gap-3">مشاهده دوره‌ها</a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg px-4">ثبت نام کنید</a>
+        </div>
+    </div>
+</header>
+
+<!-- بخش معرفی ویژگی‌ها -->
+<div class="container px-4 py-5" id="featured-3">
+    <h2 class="pb-2 border-bottom text-center">چرا ما را انتخاب کنید؟</h2>
+    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
+        <div class="feature col text-center">
+            <div class="feature-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center fs-2 mb-3" style="width: 4rem; height: 4rem;">
+                <i class="bi bi-person-video3 text-white"></i>
+            </div>
+            <h2>مربیان حرفه‌ای</h2>
+            <p>از تجربه و دانش بهترین مربیان در رشته‌های مختلف ورزشی بهره‌مند شوید.</p>
+        </div>
+        <div class="feature col text-center">
+            <div class="feature-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center fs-2 mb-3" style="width: 4rem; height: 4rem;">
+                <i class="bi bi-collection-play-fill text-white"></i>
+            </div>
+            <h2>تنوع دوره‌ها</h2>
+            <p>طیف گسترده‌ای از دوره‌های ورزشی برای تمام سطوح، از مبتدی تا پیشرفته.</p>
+        </div>
+        <div class="feature col text-center">
+            <div class="feature-icon bg-warning bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center fs-2 mb-3" style="width: 4rem; height: 4rem;">
+                <i class="bi bi-calendar-check-fill text-white"></i>
+            </div>
+            <h2>برنامه‌ریزی منعطف</h2>
+            <p>دوره‌ها و کلاس‌های خود را بر اساس زمان‌بندی مناسب خودتان انتخاب کنید.</p>
+        </div>
+    </div>
+</div>
+
+<!-- بخش دوره‌ها (در آینده پر می‌شود) -->
+<div class="container" id="courses">
+    <h2 class="pb-2 border-bottom text-center">آخرین دوره‌ها</h2>
+    <div class="alert alert-info mt-4 text-center">
+        به زودی در این بخش، لیست آخرین دوره‌های آموزشی قرار خواهد گرفت.
+    </div>
 </div>
