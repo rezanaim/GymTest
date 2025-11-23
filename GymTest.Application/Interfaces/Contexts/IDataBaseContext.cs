@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
-using GymTest.Domain.Entities.Course;
+
+using GymTest.Domain.Entities.CourseNmore;
 
 namespace GymTest.Application.Interfaces.Contexts
 {

@@ -19,7 +19,7 @@ namespace GymTest.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "5.0.17")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Category", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Category", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -51,7 +51,7 @@ namespace GymTest.Persistence.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Course", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Course", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -100,7 +100,7 @@ namespace GymTest.Persistence.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Sport", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Sport", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -132,7 +132,7 @@ namespace GymTest.Persistence.Migrations
                     b.ToTable("Sports");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.UserInCourse", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.UserInCourse", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -281,24 +281,24 @@ namespace GymTest.Persistence.Migrations
                     b.ToTable("UserInRoles");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Category", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Category", b =>
                 {
-                    b.HasOne("GymTest.Domain.Entities.Course.Category", "ParentCategory")
+                    b.HasOne("GymTest.Domain.Entities.CourseNmore.Category", "ParentCategory")
                         .WithMany("SubCategories")
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Course", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Course", b =>
                 {
                     b.HasOne("GymTest.Domain.Entities.Users.User", "Coach")
-                        .WithMany()
+                        .WithMany("CoachedCourses")
                         .HasForeignKey("CoachId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("GymTest.Domain.Entities.Course.Sport", "Sport")
+                    b.HasOne("GymTest.Domain.Entities.CourseNmore.Sport", "Sport")
                         .WithMany("Courses")
                         .HasForeignKey("SportId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -309,9 +309,9 @@ namespace GymTest.Persistence.Migrations
                     b.Navigation("Sport");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Sport", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Sport", b =>
                 {
-                    b.HasOne("GymTest.Domain.Entities.Course.Category", "Category")
+                    b.HasOne("GymTest.Domain.Entities.CourseNmore.Category", "Category")
                         .WithMany("Sports")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -320,23 +320,23 @@ namespace GymTest.Persistence.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.UserInCourse", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.UserInCourse", b =>
                 {
-                    b.HasOne("GymTest.Domain.Entities.Course.Course", "Course")
-                        .WithMany("customers")
+                    b.HasOne("GymTest.Domain.Entities.CourseNmore.Course", "Course")
+                        .WithMany("Registrations")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("GymTest.Domain.Entities.Users.User", "customer")
-                        .WithMany("UserInCourse")
+                    b.HasOne("GymTest.Domain.Entities.Users.User", "User")
+                        .WithMany("UserInCourses")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Course");
 
-                    b.Navigation("customer");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GymTest.Domain.Entities.Users.UserInRole", b =>
@@ -358,19 +358,19 @@ namespace GymTest.Persistence.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Category", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Category", b =>
                 {
                     b.Navigation("Sports");
 
                     b.Navigation("SubCategories");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Course", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Course", b =>
                 {
-                    b.Navigation("customers");
+                    b.Navigation("Registrations");
                 });
 
-            modelBuilder.Entity("GymTest.Domain.Entities.Course.Sport", b =>
+            modelBuilder.Entity("GymTest.Domain.Entities.CourseNmore.Sport", b =>
                 {
                     b.Navigation("Courses");
                 });
@@ -382,7 +382,9 @@ namespace GymTest.Persistence.Migrations
 
             modelBuilder.Entity("GymTest.Domain.Entities.Users.User", b =>
                 {
-                    b.Navigation("UserInCourse");
+                    b.Navigation("CoachedCourses");
+
+                    b.Navigation("UserInCourses");
 
                     b.Navigation("UserInRoles");
                 });

@@ -1,5 +1,6 @@
 ﻿using GymTest.Domain.Entities.Commons;
-using GymTest.Domain.Entities.Course;
+
+using GymTest.Domain.Entities.CourseNmore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +19,10 @@ namespace GymTest.Domain.Entities.Users
         public string Password { get; set; }
         public bool IsActive { get; set; }
         public ICollection<UserInRole> UserInRoles { get; set; }
-        public ICollection<UserInCourse> UserInCourse { get; set; }
+        public virtual ICollection<UserInCourse> UserInCourses { get; set; }
+
+        public virtual ICollection<Course> CoachedCourses { get; set; }
+       
     }
+    
 }

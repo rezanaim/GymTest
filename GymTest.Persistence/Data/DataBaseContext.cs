@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 using GymTest.Application.Interfaces.Contexts;
 using System.Threading;
 using GymTest.Common;
-using GymTest.Domain.Entities.Course;
+
+using GymTest.Domain.Entities.CourseNmore;
 
 namespace GymTest.Persistence.Data
 {
@@ -37,8 +38,43 @@ namespace GymTest.Persistence.Data
             protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
 
-                //Seed Data
-                SeedData(modelBuilder);
+            base.OnModelCreating(modelBuilder);
+
+
+            // اعمال ایندکس بر روی فیلد ایمیل
+            modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+
+
+
+            // ================== مدیریت صریح روابط و رفتار حذف ==================
+            // ۱. رابطه Course <--> User (مربی)
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Coach)
+                .WithMany(u => u.CoachedCourses)
+                .HasForeignKey(c => c.CoachId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ۲. رابطه UserInCourse <--> User (شرکت‌کننده)
+
+            // رابطه UserInCourse <--> User (استاندارد شده)
+            modelBuilder.Entity<UserInCourse>()
+                .HasOne(uic => uic.User) // استفاده از نام جدید
+                .WithMany(u => u.UserInCourses) // استفاده از نام جدید
+                .HasForeignKey(uic => uic.UserId) // کلید خارجی حالا درست است
+                .OnDelete(DeleteBehavior.Restrict); // 
+
+            // ۳. رابطه UserInCourse <--> Course
+            modelBuilder.Entity<UserInCourse>()
+                .HasOne(uic => uic.Course)
+                .WithMany(c => c.Registrations) // استفاده از نام جدید
+                .HasForeignKey(uic => uic.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+            // ====================================================================
+
+
+
+            //Seed Data
+            SeedData(modelBuilder);
 
 
                 // اعمال ایندکس بر روی فیلد ایمیل
@@ -48,16 +84,7 @@ namespace GymTest.Persistence.Data
 
 
 
-            // پیدا کردن تمام روابطی که می‌توانند باعث حذف آبشاری شوند
-                var cascadeFKs = modelBuilder.Model.GetEntityTypes()
-                    .SelectMany(t => t.GetForeignKeys())
-                    .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
 
-            // تغییر رفتار حذف آنها به "هیچ کاری نکن" (NoAction) یا "محدود کن" (Restrict)
-                foreach (var fk in cascadeFKs)
-                {
-                        fk.DeleteBehavior = DeleteBehavior.Restrict;
-                }
 
 
             //-- عدم نمایش اطلاعات حذف شده

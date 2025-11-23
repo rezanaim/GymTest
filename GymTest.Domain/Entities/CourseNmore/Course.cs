@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace GymTest.Domain.Entities.Course
+namespace GymTest.Domain.Entities.CourseNmore
 {
     public class Course : BaseEntity
     {
@@ -26,7 +26,7 @@ namespace GymTest.Domain.Entities.Course
         public long CoachId { get; set; }
         //این رابطه یک به یک با یوزر مربوط به رابطه یک به یک بین مدرس و دوره است
 
-        public  ICollection<UserInCourse> customers { get; set; }
+        public virtual ICollection<UserInCourse> Registrations { get; set; } 
         // اینم رابطه یک به چند بین دوره و یوزر ها (مشتریان) هست
 
         public virtual Sport Sport { get; set; }
@@ -79,9 +79,9 @@ namespace GymTest.Domain.Entities.Course
         public virtual Course Course { get; set; }
         public long CourseId { get; set; }
 
-        public virtual User customer { get; set; }
-        public long CustomerId { get; set; }
-        
+        public virtual User User { get; set; }
+        public long UserId { get; set; }
+
     }
 }
 
