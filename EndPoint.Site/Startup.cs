@@ -17,6 +17,7 @@ using GymTest.Domain.Entities.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 //using GymTest.Application.Services.Users.Query.IGetUser;
 using GymTest.Application.Services.Users.Query.GetUser;
+using GymTest.Application.Services.Users.Query.GetDataForUpdateUser;
 
 namespace EndPoint.Site
 
@@ -59,6 +60,9 @@ namespace EndPoint.Site
             services.AddScoped<ILoginUser, LoginUser>();
             services.AddScoped<IGetUsers, GetUser>();
             services.AddScoped<IDeleteUser, DeleteUser>();
+            services.AddScoped<IUpdateUser, UpdateUser>();
+            services.AddScoped<IGetDataForUpdateUser, GetDataForUpdateUser>();
+
         }
         // This method gets called by the runtime. Use this method to add services to the container.
         /*
