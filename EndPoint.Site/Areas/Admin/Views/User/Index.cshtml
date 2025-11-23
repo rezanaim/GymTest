@@ -1,4 +1,5 @@
-﻿@model ResultGetUserDto
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ResultGetUserDto
 @{
     ViewData["Title"] = "لیست کاربران";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
@@ -46,30 +47,30 @@
                 <tbody>
                     @foreach (var user in Model.Users)
                     {
-                    <tr id="userRow_@user.UserId">
-                        <!-- ۲. ID برای ردیف -->
-                        <td>@user.UserId</td>
-                        <td>@user.FirstName @user.LastName</td>
-                        <td>@user.Email</td>
-                        <td>@string.Join("، ", user.Roles)</td>
-                        <td>
-                            @if (user.IsActive)
+                        <tr id="userRow_@user.UserId">
+                            <!-- ۲. ID برای ردیف -->
+                            <td>@user.UserId</td>
+                            <td>@user.FirstName @user.LastName</td>
+                            <td>@user.Email</td>
+                            <td>@string.Join("، ", user.Roles)</td>
+                            <td>
+                                @if (user.IsActive)
                                 {<span class="badge bg-success">فعال</span> }
                                 else
                                 { <span class="badge bg-danger">غیرفعال</span>}
-                        </td>
-                        <td>
-                            <!-- ۳. سلول جدید برای دکمه‌ها -->
-                            <div class="btn-group btn-group-sm">
-                                <a href="#" class="btn btn-outline-warning">ویرایش</a>
-                                <button class="btn btn-outline-danger js-delete-user"
-                                        data-user-id="@user.UserId"
-                                        data-user-name="@user.FirstName @user.LastName">
-                                    حذف
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td>
+                                <!-- ۳. سلول جدید برای دکمه‌ها -->
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-outline-warning">ویرایش</a>
+                                    <button class="btn btn-outline-danger js-delete-user"
+                                            data-user-id="@user.UserId"
+                                            data-user-name="@user.FirstName @user.LastName">
+                                        حذف
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -77,19 +78,19 @@
 
         @if (pageCount > 1)
         {
-        <nav class="d-flex justify-content-center mt-4">
-            <ul class="pagination">
-                @for (int i = 1; i <= pageCount; i++)
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination">
+                    @for (int i = 1; i <= pageCount; i++)
                     {
-                <li class="page-item @(i == currentPage ? "active" : "")">
-                    @{
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            @{
                                 var url = $"/Admin/User/Index?page={i}&searchKey={searchKey}";
+                            }
+                            <a class="page-link" href="@url">@i</a>
+                        </li>
                     }
-                    <a class="page-link" href="@url">@i</a>
-                </li>
-                    }
-            </ul>
-        </nav>
+                </ul>
+            </nav>
         }
     </div>
 </div>
