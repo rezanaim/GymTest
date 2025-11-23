@@ -80,7 +80,7 @@ namespace GymTest.Domain.Entities.Course
         public long CourseId { get; set; }
 
         public virtual User customer { get; set; }
-        public long UserId { get; set; }
+        public long CustomerId { get; set; }
         
     }
 }
