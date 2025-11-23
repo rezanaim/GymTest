@@ -40,6 +40,7 @@ namespace GymTest.Application.Services.Users.Query.GetDataForUpdateUser
             {
                 Data = new UserDto()
                 {
+                    Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Email = user.Email,
@@ -58,6 +59,7 @@ namespace GymTest.Application.Services.Users.Query.GetDataForUpdateUser
 
     public class UserDto
     {
+        public long Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
