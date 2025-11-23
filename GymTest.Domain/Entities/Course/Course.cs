@@ -23,7 +23,7 @@ namespace GymTest.Domain.Entities.Course
         //relations
 
         public virtual User Coach { get; set; }
-        public long UserId { get; set; }
+        public long CoachId { get; set; }
         //این رابطه یک به یک با یوزر مربوط به رابطه یک به یک بین مدرس و دوره است
 
         public  ICollection<UserInCourse> customers { get; set; }
