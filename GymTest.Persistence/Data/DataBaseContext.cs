@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using GymTest.Application.Interfaces.Contexts;
 using System.Threading;
 using GymTest.Common;
+using GymTest.Domain.Entities.Course;
 
 namespace GymTest.Persistence.Data
 {
@@ -19,6 +20,12 @@ namespace GymTest.Persistence.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserInRole> UserInRoles { get; set; }
+
+        public DbSet<Course> Courses { get; set; }
+        public DbSet<Sport> Sports { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<UserInCourse> UserInCourses { get; set; }
+
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
