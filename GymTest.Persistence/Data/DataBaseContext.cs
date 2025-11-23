@@ -45,8 +45,23 @@ namespace GymTest.Persistence.Data
                 // اعمال عدم تکراری بودن ایمیل
                 modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
 
-                //-- عدم نمایش اطلاعات حذف شده
-                ApplyQueryFilter(modelBuilder);
+
+
+
+            // پیدا کردن تمام روابطی که می‌توانند باعث حذف آبشاری شوند
+                var cascadeFKs = modelBuilder.Model.GetEntityTypes()
+                    .SelectMany(t => t.GetForeignKeys())
+                    .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+            // تغییر رفتار حذف آنها به "هیچ کاری نکن" (NoAction) یا "محدود کن" (Restrict)
+                foreach (var fk in cascadeFKs)
+                {
+                        fk.DeleteBehavior = DeleteBehavior.Restrict;
+                }
+
+
+            //-- عدم نمایش اطلاعات حذف شده
+            ApplyQueryFilter(modelBuilder);
             }
 
             private void ApplyQueryFilter(ModelBuilder modelBuilder)
