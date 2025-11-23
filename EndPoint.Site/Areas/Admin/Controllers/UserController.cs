@@ -1,5 +1,6 @@
 ﻿using GymTest.Application.Services.Users.Command;
 using GymTest.Application.Services.Users.Query;
+using GymTest.Application.Services.Users.Query.GetDataForUpdateUser;
 using GymTest.Application.Services.Users.Query.GetUser;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,10 +17,26 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     {
         private readonly IGetUsers _getUsers;
         private readonly IDeleteUser _deleteUser;
-        public UserController(IGetUsers getUsers, IDeleteUser deleteUser)
+
+        private readonly IUpdateUser _updateUser;
+        private readonly IGetDataForUpdateUser _getDataForUpdateUser;
+
+        public UserController(
+            IGetUsers getUsers,
+            IDeleteUser deleteUser,
+            
+            IUpdateUser updateUser,
+            IGetDataForUpdateUser getDataForUpdateUser
+            
+            )
         {
             _getUsers = getUsers;
             _deleteUser = deleteUser;
+
+            _updateUser = updateUser;
+            _getDataForUpdateUser = getDataForUpdateUser;
+
+
         }
 
 
@@ -64,24 +81,29 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: UserController1/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult Edit(long id)
         {
-            return View();
+            var result = _getDataForUpdateUser.Execute(id);
+            var data = result.Data;
+
+            if (!result.IsSuccess)
+            {
+                return NotFound();
+            }
+
+            return View(data);
         }
 
         // POST: UserController1/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Edit( RequestUpdateDto request)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var result = _updateUser.Execute(request);
+
+            return Json(result);
+            
         }
 
         // GET: UserController1/Delete/5
