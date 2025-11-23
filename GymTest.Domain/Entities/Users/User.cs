@@ -1,4 +1,5 @@
 ﻿using GymTest.Domain.Entities.Commons;
+using GymTest.Domain.Entities.Course;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +18,6 @@ namespace GymTest.Domain.Entities.Users
         public string Password { get; set; }
         public bool IsActive { get; set; }
         public ICollection<UserInRole> UserInRoles { get; set; }
+        public ICollection<UserInCourse> UserInCourse { get; set; }
     }
 }
