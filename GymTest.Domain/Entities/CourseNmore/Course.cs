@@ -18,7 +18,8 @@ namespace GymTest.Domain.Entities.CourseNmore
         public decimal Price { get; set; }
         public int Capacity { get; set; }
         //public DateTime StartDate { get; set; }
-        public int DurationInHours { get; set; }
+        public int DurationInMins{ get; set; }
+        public int LectureCount { get; set; }
 
         //relations
 
