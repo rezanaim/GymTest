@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GymTest.Common
 {
-    class Sports
+    class SportSeed
     {
         //توپی
         public const string Football = "Football";
