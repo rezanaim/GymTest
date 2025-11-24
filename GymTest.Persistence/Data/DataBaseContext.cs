@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using GymTest.Application.Interfaces.Contexts;
 using System.Threading;
 using GymTest.Common;
-
 using GymTest.Domain.Entities.CourseNmore;
 
 namespace GymTest.Persistence.Data
@@ -107,6 +106,23 @@ namespace GymTest.Persistence.Data
                 modelBuilder.Entity<Role>().HasData(new Role { Id = 1, Name = nameof(UserRoles.Admin) });
                 modelBuilder.Entity<Role>().HasData(new Role { Id = 2, Name = nameof(UserRoles.Coach) });
                 modelBuilder.Entity<Role>().HasData(new Role { Id = 3, Name = nameof(UserRoles.Customer) });
+
+                modelBuilder.Entity<Sport>().HasData(new Sport { Id = 1, Name = nameof(SportSeed.Football) });
+                modelBuilder.Entity<Sport>().HasData(new Sport { Id = 2, Name = nameof(SportSeed.Pingpong) });
+                modelBuilder.Entity<Sport>().HasData(new Sport { Id = 3, Name = nameof(SportSeed.Chess) });
+                modelBuilder.Entity<Sport>().HasData(new Sport { Id = 4, Name = nameof(SportSeed.Wrestling) });
+                modelBuilder.Entity<Sport>().HasData(new Sport { Id = 5, Name = nameof(SportSeed.Boxing) });
+                modelBuilder.Entity<Sport>().HasData(new Sport { Id = 6, Name = nameof(SportSeed.Ski) });
+                
+
+
+                modelBuilder.Entity<Category>().HasData(new Sport { Id = 1, Name = nameof(CategorySeed.Ball) });
+                modelBuilder.Entity<Category>().HasData(new Sport { Id = 2, Name = nameof(CategorySeed.Mind) });
+                modelBuilder.Entity<Category>().HasData(new Sport { Id = 3, Name = nameof(CategorySeed.Fight) });
+                modelBuilder.Entity<Category>().HasData(new Sport { Id = 4, Name = nameof(CategorySeed.Winter) });
+                
+
+                
             }
 
         }
