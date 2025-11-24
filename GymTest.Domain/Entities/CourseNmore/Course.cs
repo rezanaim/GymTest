@@ -45,7 +45,7 @@ namespace GymTest.Domain.Entities.CourseNmore
     public class Sport : BaseEntity
     {
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         //relations
         public ICollection<Course> Courses { get; set; }
