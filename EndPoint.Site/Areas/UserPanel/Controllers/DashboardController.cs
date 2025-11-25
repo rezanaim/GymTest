@@ -1,4 +1,5 @@
 ﻿using GymTest.Application.Services.Users.Command;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -38,29 +39,16 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         }
 
         // GET: DashboardController/Create
+        [HttpGet]
         public ActionResult CreateCourse()
         {
-            /*
-            var sportsList = new List<SelectListItem>
-            {
 
-                // ساخت لیستی از ورزش ها  در ویو بگ برای ویویی که قراره جیمینای بسازه
-                new SelectListItem { Value = "1", Text = "Football" },
-                new SelectListItem { Value = "2", Text = "Pingpong" },
-                new SelectListItem { Value = "3", Text = "Chess" },
-                new SelectListItem { Value = "4", Text = "Wrestling" },
-                new SelectListItem { Value = "5", Text = "Boxing" },
-                new SelectListItem { Value = "6", Text = "Ski" }
-            };
-
-            // ۲. ارسال این لیست به ویو از طریق ViewBag
-            ViewBag.Sports = sportsList;
-            */
             return View();
         }
 
         // POST: DashboardController/Create
         [HttpPost]
+        [Authorize]
         //[ValidateAntiForgeryToken]
         public ActionResult CreateCourse(RequestAddNewCourseDto request)
         {
