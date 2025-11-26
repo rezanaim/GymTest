@@ -171,9 +171,9 @@ namespace EndPoint.Site.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(RequestLoginUserDto request)
+        public async Task<IActionResult> Login(RequestLoginUserDto request)
         {
-            var resultLogin = _login.Execute(new RequestLoginUserDto()
+            var resultLogin = await _login.Execute(new RequestLoginUserDto()
             {
                 Email = request.Email,
                 Password = request.Password
