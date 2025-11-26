@@ -60,7 +60,7 @@ namespace GymTest.Application.Services.Users.Command
                 Title = request.Title,
                 Description = request.Description,
                 Price = request.price,
-                CoachId = request.CoachId,
+                CoachId = coachId,
                 SportId = request.SportId
             };
 
