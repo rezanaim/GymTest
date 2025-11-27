@@ -41,16 +41,28 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: CategoryController/Create
+        [HttpGet]
         public ActionResult Create()
         {
 
+            // ۱. نتیجه کامل را از سرویس بگیر
+            var categoriesResult = _getCategories.Execure(new RequestGetCategoriesDto { PageNumber = 1, SearchKey = "" });
+
+            // ۲. لیست دسته‌بندی‌ها را مستقیماً از پراپرتی Categories بخوان
+             var parentCategories = categoriesResult.Categories;
+
+            // ۳. SelectList را بساز
+            //    این کد همچنان خطا می‌دهد چون GetCategoryDto شما Id ندارد!
+            ViewBag.Categories = new SelectList(parentCategories, "Id", "Name");
+
+                
             
             return View();
         }
 
         // POST: CategoryController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public ActionResult Create(long? parentId , String name )
         {
 

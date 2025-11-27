@@ -1,20 +1,22 @@
-﻿@{
+﻿@* این ویو باید از کنترلر، لیستی از دسته‌بندی‌ها را در ViewBag.Categories دریافت کند *@
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
     ViewData["Title"] = "افزودن دسته‌بندی جدید";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 }
 
 <div class="container-fluid pt-4 px-4">
-    <div class="row g-4">
-        <div class="col-sm-12 col-xl-6">
-            <div class="card">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-sm">
                 <div class="card-header">
-                    <h5>افزودن دسته‌بندی جدید برای ورزش‌ها</h5>
+                    <h5 class="mb-0">افزودن دسته‌بندی جدید</h5>
                 </div>
                 <div class="card-body">
 
                     <div id="message-area" class="mb-3"></div>
 
-                    <form id="create-category-form">
+                    <form id="create-form">
                         <div class="mb-3">
                             <label for="Name" class="form-label">نام دسته‌بندی</label>
                             <input type="text" id="Name" name="Name" class="form-control" required>
@@ -25,10 +27,13 @@
                             <select id="ParentId" name="ParentId" class="form-select" asp-items="@ViewBag.Categories">
                                 <option value="">-- دسته‌بندی اصلی (بدون والد) --</option>
                             </select>
-                            <div class="form-text">اگر این دسته‌بندی یک زیرشاخه است، والد آن را انتخاب کنید.</div>
+                            <div class="form-text">برای ساخت یک دسته‌بندی اصلی، این فیلد را خالی بگذارید.</div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">افزودن دسته‌بندی</button>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success">ایجاد دسته‌بندی</button>
+                            <a asp-action="Index" class="btn btn-secondary me-2">انصراف</a>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -38,37 +43,49 @@
 
 @section Scripts {
     <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const form = document.getElementById('create-category-form');
-        const messageArea = document.getElementById('message-area');
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('create-form');
+            const messageArea = document.getElementById('message-area');
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-            messageArea.innerHTML = '';
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                messageArea.innerHTML = '';
 
-            const formData = new FormData(form);
+                const formData = new FormData(form);
 
-            // مطمئن شوید که URL صحیح است
-            fetch('/Admin/Categories/Create', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                let alertClass = data.isSuccess ? 'alert-success' : 'alert-danger';
-                messageArea.innerHTML = `<div class="alert ${alertClass}">${data.message}</div>`;
+                // آدرس صحیح اکشن POST شما
+                const url = '/Admin/Categories/Create';
 
-                if (data.isSuccess) {
-                    form.reset();
-                    // شما می‌توانید بعد از موفقیت، لیست Dropdown را هم آپدیت کنید
-                    // یا صفحه را رفرش کنید تا دسته‌بندی جدید در لیست ظاهر شود.
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                messageArea.innerHTML = '<div class="alert alert-danger">خطایی در ارتباط با سرور رخ داد.</div>';
+                fetch(url, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        // هدر AntiForgeryToken در صورت نیاز
+                    }
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`خطای سرور: ${response.status} ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const alertClass = data.isSuccess ? 'alert-success' : 'alert-danger';
+                        messageArea.innerHTML = `<div class="alert ${alertClass}">${data.message}</div>`;
+
+                        if (data.isSuccess) {
+                            form.reset();
+                            // در صورت موفقیت، بعد از ۲ ثانیه به لیست برگرد
+                            setTimeout(() => {
+                                window.location.href = '/Admin/Categories/Index';
+                            }, 2000);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch Error:', error);
+                        messageArea.innerHTML = `<div class="alert alert-danger">یک خطای پیش‌بینی نشده رخ داد. لطفا کنسول را چک کنید.</div>`;
+                    });
             });
         });
-    });
     </script>
 }

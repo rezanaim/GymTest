@@ -1,0 +1,84 @@
+﻿@* ۱. استفاده از نام کامل و با نیم‌اسپیس مدل *@
+@model GymTest.Application.Services.Categories.Query.ResultGetCategoriesDto
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "مدیریت دسته‌بندی‌ها";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+
+    // --- محاسبات برای صفحه‌بندی ---
+    int pageSize = 10;
+    int currentPage = 1;
+    // اشتباه تایپی PgaeNumber از سرویس شما را در نظر می‌گیریم
+    if (Context.Request.Query.ContainsKey("PgaeNumber"))
+    {
+        int.TryParse(Context.Request.Query["PgaeNumber"], out currentPage);
+    }
+    var searchKey = Context.Request.Query["searchKey"];
+    int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="card shadow-sm">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">لیست دسته‌بندی‌ها</h5>
+            <a asp-area="Admin" asp-controller="Categories" asp-action="CreateCategory" class="btn btn-success btn-sm">
+                افزودن دسته‌بندی جدید
+            </a>
+        </div>
+        <div class="card-body">
+
+            <form method="get" class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" name="searchKey" class="form-control" placeholder="جستجو بر اساس نام..." value="@searchKey">
+                        <button class="btn btn-primary" type="submit">بگرد</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>#</th>
+                            <th>نام دسته‌بندی</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int row = ((currentPage - 1) * pageSize) + 1; }
+                        @foreach (var category in Model.Categories)
+                        {
+                            <tr>
+                                <td>@(row++)</td>
+                                <td>@category.Name</td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="#" class="btn btn-outline-warning disabled">ویرایش</a>
+                                        <a href="#" class="btn btn-outline-danger disabled">حذف</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- صفحه‌بندی -->
+            @if (pageCount > 1)
+            {
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        @for (int i = 1; i <= pageCount; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" asp-area="Admin" asp-controller="Categories" asp-action="Index" asp-route-PgaeNumber="@i" asp-route-searchKey="@searchKey">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+
+        </div>
+    </div>
+</div>
