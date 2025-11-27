@@ -2,6 +2,7 @@
 using GymTest.Application.Services.Categories.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,13 @@ using System.Threading.Tasks;
 namespace EndPoint.Site.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class CategoryController : Controller
+    public class CategoriesController : Controller
     {
         private readonly IGetCategories _getCategories;
         private readonly IAddNewCategory _addNewCategory;
 
 
-        public CategoryController(
+        public CategoriesController(
             
             IGetCategories getCategories,
             IAddNewCategory addNewCategory
@@ -42,15 +43,22 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         // GET: CategoryController/Create
         public ActionResult Create()
         {
+
+            
             return View();
         }
 
         // POST: CategoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(RequestAddNewCategory request)
+        public ActionResult Create(long? parentId , String name )
         {
 
+            var request = new RequestAddNewCategory()
+            {
+                Name = name,
+                ParentId = parentId
+            };
             var result = _addNewCategory.Execute(new RequestAddNewCategory()
             {
                 Name = request.Name,
