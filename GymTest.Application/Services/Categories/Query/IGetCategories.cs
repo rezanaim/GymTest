@@ -35,10 +35,11 @@ namespace GymTest.Application.Services.Categories.Query
                 );
             }
 
-            var showList = query.ToPaged(request.PgaeNumber, pageSize, out int rowsCount)
+            var showList = query.ToPaged(request.PageNumber, pageSize, out int rowsCount)
                 .Select(p => new GetCategoryDto()
                 {
                     Name = p.Name,
+                    Id = p.Id
                 }).ToList();
 
 
@@ -63,6 +64,7 @@ namespace GymTest.Application.Services.Categories.Query
     public class GetCategoryDto
     {
         public string Name { get; set; }
+        public long Id { get; set; }
         //public string ParentName { get; set; }
 
     }
