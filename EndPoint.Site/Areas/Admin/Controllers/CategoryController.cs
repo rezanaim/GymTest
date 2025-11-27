@@ -1,0 +1,116 @@
+﻿using GymTest.Application.Services.Categories.Command;
+using GymTest.Application.Services.Categories.Query;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+namespace EndPoint.Site.Areas.Admin.Controllers
+{
+    [Area("Admin")]
+    public class CategoryController : Controller
+    {
+        private readonly IGetCategories _getCategories;
+        private readonly IAddNewCategory _addNewCategory;
+
+
+        public CategoryController(
+            
+            IGetCategories getCategories,
+            IAddNewCategory addNewCategory
+
+            )
+        {
+
+            _getCategories = getCategories;
+            _addNewCategory = addNewCategory;
+        }
+        // GET: CategoryController
+        public ActionResult Index(string searchKey = "", int pageNumber = 1)
+        {
+            var request = new RequestGetCategoriesDto()
+            {
+                PgaeNumber = pageNumber,
+                SearchKey = searchKey
+            };
+            var actionResult = _getCategories.Execure(request);
+            return View(actionResult);
+        }
+
+        // GET: CategoryController/Create
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: CategoryController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(RequestAddNewCategory request)
+        {
+
+            var result = _addNewCategory.Execute(new RequestAddNewCategory()
+            {
+                Name = request.Name,
+                ParentId = request.ParentId
+
+            });
+            return Json(result);
+        }
+
+        /*
+        // GET: CategoryController/Details/5
+        public ActionResult Details(int id)
+        {
+            return View();
+        }
+
+        
+
+        // GET: CategoryController/Edit/5
+        public ActionResult Edit(int id)
+        {
+            return View();
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        // GET: CategoryController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            return View();
+        }
+
+        // POST: CategoryController/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        */
+    }
+}

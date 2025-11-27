@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 //using GymTest.Application.Services.Users.Query.IGetUser;
 using GymTest.Application.Services.Users.Query.GetUser;
 using GymTest.Application.Services.Users.Query.GetDataForUpdateUser;
+using GymTest.Application.Services.Categories.Command;
+using GymTest.Application.Services.Categories.Query;
 
 namespace EndPoint.Site
 
@@ -63,6 +65,8 @@ namespace EndPoint.Site
             services.AddScoped<IUpdateUser, UpdateUser>();
             services.AddScoped<IGetDataForUpdateUser, GetDataForUpdateUser>();
             services.AddScoped<IAddNewCourse, AddNewCourse>();
+            services.AddScoped<IAddNewCategory, AddNewCategory>();
+            services.AddScoped<IGetCategories, GetCategories>();
             
 
         }
