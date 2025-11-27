@@ -57,7 +57,7 @@ namespace GymTest.Application.Services.Categories.Query
     public class RequestGetCategoriesDto
     {
         public string SearchKey { get; set; }
-        public int PgaeNumber { get; set; }
+        public int PageNumber { get; set; }
     }
 
     public class GetCategoryDto

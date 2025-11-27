@@ -33,7 +33,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         {
             var request = new RequestGetCategoriesDto()
             {
-                PgaeNumber = pageNumber,
+                PageNumber = pageNumber,
                 SearchKey = searchKey
             };
             var actionResult = _getCategories.Execure(request);
