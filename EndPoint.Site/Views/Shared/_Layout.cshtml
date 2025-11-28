@@ -34,6 +34,7 @@
                     </ul>
 
                     <!-- ================= بخش مدیریت وضعیت کاربر (مهم‌ترین بخش) ================= -->
+                    <!-- ================= بخش مدیریت وضعیت کاربر (اصلاح شده) ================= -->
                     <div class="d-flex">
                         @if (User.Identity.IsAuthenticated)
                         {
@@ -43,13 +44,33 @@
                                     <i class="bi bi-person-circle fs-5 me-2"></i>
                                     خوش آمدید، @User.Identity.Name
                                 </a>
-                                <ul class="dropdown-menu text-small" aria-labelledby="dropdownUser">
+                                <ul class="dropdown-menu text-small text-end" aria-labelledby="dropdownUser">
+
+                                    @* ۱. لینک "پنل کاربری" برای همه کاربران لاگین کرده *@
+                                    <li>
+                                        <a class="dropdown-item" asp-area="UserPanel" asp-controller="Dashboard" asp-action="Index">
+                                            <i class="bi bi-layout-text-sidebar-reverse me-1"></i> پنل کاربری
+                                        </a>
+                                    </li>
+
+                                    @* ۲. لینک "پنل مدیریت" فقط برای ادمین‌ها *@
                                     @if (User.IsInRole("Admin"))
                                     {
-                                        <li><a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">پنل مدیریت</a></li>
-                                        <li><hr class="dropdown-divider"></li>
+                                        <li>
+                                            <a class="dropdown-item" asp-area="Admin" asp-controller="User" asp-action="Index">
+                                                <i class="bi bi-gear-fill me-1"></i> پنل مدیریت
+                                            </a>
+                                        </li>
                                     }
-                                    <li><a class="dropdown-item" asp-controller="Account" asp-action="SignOut">خروج</a></li>
+
+                                    <li><hr class="dropdown-divider"></li>
+
+                                    @* لینک خروج *@
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Account" asp-action="Logout">
+                                            <i class="bi bi-box-arrow-right me-1"></i> خروج
+                                        </a>
+                                    </li>
                                 </ul>
                             </div>
                         }
@@ -60,6 +81,7 @@
                             <a class="btn btn-primary" asp-controller="Account" asp-action="Register">ثبت نام</a>
                         }
                     </div>
+                    <!-- ======================================================================= -->
                     <!-- ======================================================================= -->
                 </div>
             </div>
