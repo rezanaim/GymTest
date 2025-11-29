@@ -20,6 +20,7 @@ using GymTest.Application.Services.Users.Query.GetUser;
 using GymTest.Application.Services.Users.Query.GetDataForUpdateUser;
 using GymTest.Application.Services.Categories.Command;
 using GymTest.Application.Services.Categories.Query;
+using GymTest.Application.Services.Courses.Query;
 
 namespace EndPoint.Site
 
@@ -67,6 +68,7 @@ namespace EndPoint.Site
             services.AddScoped<IAddNewCourse, AddNewCourse>();
             services.AddScoped<IAddNewCategory, AddNewCategory>();
             services.AddScoped<IGetCategories, GetCategories>();
+            services.AddScoped<IGetCourses, GetCourses>();
             
 
         }
