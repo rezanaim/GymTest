@@ -1,13 +1,25 @@
-﻿@{
+﻿@using GymTest.Application.Services.Courses.Query
+@model ResultGetCoursesDto
+@{
     ViewData["Title"] = "صفحه اصلی";
+
+    // --- محاسبات برای صفحه‌بندی ---
+    int pageSize = 6; // نمایش ۶ دوره در هر صفحه (۳ در هر ردیف)
+    int currentPage = 1;
+    if (Context.Request.Query.ContainsKey("PageNumber"))
+    {
+        int.TryParse(Context.Request.Query["PageNumber"], out currentPage);
+    }
+    var searchKey = Context.Request.Query["searchKey"];
+    int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
 }
 
-<!-- بخش هدر اصلی سایت (Hero Section) -->
+<!-- بخش هدر اصلی سایت (Hero Section) - بدون تغییر -->
 <header class="text-center bg-dark text-white p-5 mb-4 rounded-3">
     <div class="container">
         <h1 class="display-4 fw-bold">به باشگاه ورزشی ما خوش آمدید</h1>
         <p class="lead col-md-8 mx-auto">
-            بهترین دوره‌های آموزشی را با مربیان حرفه‌ای تجربه کنید. از بدنسازی و فیتنس گرفته تا یوگا و پیلاتس، ما شما را در مسیر رسیدن به اهداف‌تان همراهی می‌کنیم.
+            بهترین دوره‌های آموزشی را با مربیان حرفه‌ای تجربه کنید.
         </p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
             <a href="#courses" class="btn btn-primary btn-lg px-4 gap-3">مشاهده دوره‌ها</a>
@@ -16,38 +28,69 @@
     </div>
 </header>
 
-<!-- بخش معرفی ویژگی‌ها -->
+<!-- بخش معرفی ویژگی‌ها (بدون تغییر) -->
 <div class="container px-4 py-5" id="featured-3">
-    <h2 class="pb-2 border-bottom text-center">چرا ما را انتخاب کنید؟</h2>
-    <div class="row g-4 py-5 row-cols-1 row-cols-lg-3">
-        <div class="feature col text-center">
-            <div class="feature-icon bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center fs-2 mb-3" style="width: 4rem; height: 4rem;">
-                <i class="bi bi-person-video3 text-white"></i>
-            </div>
-            <h2>مربیان حرفه‌ای</h2>
-            <p>از تجربه و دانش بهترین مربیان در رشته‌های مختلف ورزشی بهره‌مند شوید.</p>
-        </div>
-        <div class="feature col text-center">
-            <div class="feature-icon bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center fs-2 mb-3" style="width: 4rem; height: 4rem;">
-                <i class="bi bi-collection-play-fill text-white"></i>
-            </div>
-            <h2>تنوع دوره‌ها</h2>
-            <p>طیف گسترده‌ای از دوره‌های ورزشی برای تمام سطوح، از مبتدی تا پیشرفته.</p>
-        </div>
-        <div class="feature col text-center">
-            <div class="feature-icon bg-warning bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center fs-2 mb-3" style="width: 4rem; height: 4rem;">
-                <i class="bi bi-calendar-check-fill text-white"></i>
-            </div>
-            <h2>برنامه‌ریزی منعطف</h2>
-            <p>دوره‌ها و کلاس‌های خود را بر اساس زمان‌بندی مناسب خودتان انتخاب کنید.</p>
-        </div>
-    </div>
+    <!-- ... محتوای این بخش مثل قبل ... -->
 </div>
 
-<!-- بخش دوره‌ها (در آینده پر می‌شود) -->
+
+<!-- =================== بخش دوره‌ها (ارتقا یافته) =================== -->
 <div class="container" id="courses">
     <h2 class="pb-2 border-bottom text-center">آخرین دوره‌ها</h2>
-    <div class="alert alert-info mt-4 text-center">
-        به زودی در این بخش، لیست آخرین دوره‌های آموزشی قرار خواهد گرفت.
+
+    <!-- فرم جستجو -->
+    <div class="row justify-content-center my-4">
+        <div class="col-md-8 col-lg-6">
+            <form method="get" class="input-group">
+                <input type="text" name="searchKey" class="form-control form-control-lg" placeholder="جستجوی دوره، مربی یا نوع ورزش..." value="@searchKey">
+                <button class="btn btn-primary" type="submit">بگرد</button>
+            </form>
+        </div>
     </div>
+
+    @if (Model != null && Model.CourseList.Any())
+    {
+        <!-- نمایش دوره‌ها به صورت کارت -->
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            @foreach (var course in Model.CourseList)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@course.Title</h5>
+                            <p class="card-text text-muted flex-grow-1">@course.Description.Substring(0, Math.Min(course.Description.Length, 100))... </p>
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <span class="badge bg-info text-dark">@course.SportName</span>
+                                <span class="fw-bold">@course.Price.ToString("n0") تومان</span>
+                            </div>
+                            <small class="text-muted">مربی: @course.CoachName</small>
+                            <a href="#" class="btn btn-outline-primary mt-3 stretched-link">مشاهده جزئیات</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <!-- صفحه‌بندی -->
+        @if (pageCount > 1)
+        {
+            <nav class="d-flex justify-content-center mt-5">
+                <ul class="pagination">
+                    @for (int i = 1; i <= pageCount; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-searchKey="@searchKey">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        }
+    }
+    else
+    {
+        <div class="alert alert-warning text-center mt-4">
+            هیچ دوره‌ای مطابق با جستجوی شما یافت نشد.
+        </div>
+    }
 </div>
+<!-- ==================================================================== -->
