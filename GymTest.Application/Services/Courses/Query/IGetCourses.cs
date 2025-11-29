@@ -27,7 +27,7 @@ namespace GymTest.Application.Services.Courses.Query
 
         public ResultGetCoursesDto Execute(RequestGetCoursesDto request)
         {
-            const int pageSize = 5;
+            const int pageSize = 6;
             IQueryable<Course> CourseQuery = _context.Courses
             .Include(p => p.Coach)
             .Include(p => p.Sport);
