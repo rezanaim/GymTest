@@ -58,7 +58,7 @@ namespace GymTest.Application.Services.Courses.Query
                 {
                     Title = p.Title,
                     Description = p.Description,
-                    price = p.Price,
+                    Price = p.Price,
                     DurationInMins = p.DurationInMins,
                     LectureCount = p.LectureCount,
                     CoachName = (p.Coach.FirstName + " " + p.Coach.LastName),
@@ -93,7 +93,7 @@ namespace GymTest.Application.Services.Courses.Query
     {
         public string Title { get; set; }
         public string Description { get; set; }
-        public decimal price { get; set; }
+        public decimal Price { get; set; }
         public int DurationInMins { get; set; }
         public int LectureCount { get; set; }
         public string CoachName { get; set; }
