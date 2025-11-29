@@ -48,7 +48,7 @@ namespace GymTest.Application.Services.Courses.Query
             //var courseList = CourseQuery.ToPaged()
 
 
-            int totlaRows = CourseQuery.Count();
+            int totalaRows = CourseQuery.Count();
 
             var courseList = CourseQuery
                 .OrderByDescending(p => p.Id)
@@ -67,7 +67,11 @@ namespace GymTest.Application.Services.Courses.Query
                 }).ToList();
                 
 
-            throw new NotImplementedException();
+            return new ResultGetCoursesDto()
+            {
+                CourseList = courseList,
+                TotalRows = totalaRows
+            };
         }
     }
 
@@ -81,7 +85,7 @@ namespace GymTest.Application.Services.Courses.Query
 
     public class ResultGetCoursesDto
     {
-        public List<Course> CourseList { get; set; }
+        public List<CourseDto> CourseList { get; set; }
         public int TotalRows { get; set; }
     }
 
