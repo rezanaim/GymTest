@@ -1,4 +1,5 @@
 ﻿using EndPoint.Site.Models;
+using GymTest.Application.Services.Courses.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,15 +13,26 @@ namespace EndPoint.Site.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IGetCourses _getCourses;
 
-        public HomeController(ILogger<HomeController> logger)
+
+        public HomeController(ILogger<HomeController> logger, IGetCourses getCourses)
         {
             _logger = logger;
+            _getCourses = getCourses;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string searchKey = "", int pageNumber = 1)
         {
-            return View();
+            var request = new RequestGetCoursesDto()
+            {
+                SearchKey = searchKey,
+                PageNumber = pageNumber
+            };
+
+            var result = _getCourses.Execute(request);
+
+            return View(result);
         }
 
         public IActionResult Privacy()
