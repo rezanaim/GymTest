@@ -64,7 +64,7 @@ namespace GymTest.Application.Services.Courses.Query
                     CoachName = (p.Coach.FirstName + " " + p.Coach.LastName),
                     SportName = p.Sport.Name
 
-                });
+                }).ToList();
                 
 
             throw new NotImplementedException();
