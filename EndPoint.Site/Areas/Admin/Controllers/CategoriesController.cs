@@ -15,18 +15,20 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     {
         private readonly IGetCategories _getCategories;
         private readonly IAddNewCategory _addNewCategory;
+        private readonly IRemoveCategory _removeCategory;
 
 
         public CategoriesController(
             
             IGetCategories getCategories,
-            IAddNewCategory addNewCategory
-
+            IAddNewCategory addNewCategory,
+            IRemoveCategory removeCategory
             )
         {
 
             _getCategories = getCategories;
             _addNewCategory = addNewCategory;
+            _removeCategory = removeCategory;
         }
         // GET: CategoryController
         public ActionResult Index(string searchKey = "", int pageNumber = 1)
@@ -80,6 +82,24 @@ namespace EndPoint.Site.Areas.Admin.Controllers
             return Json(result);
         }
 
+
+
+
+
+        // POST: CategoryController/Delete/5
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
+        {
+            var request = new RequestRemoveCategory()
+            {
+                CategoryId = id
+            };
+
+            var result = _removeCategory.Execute(request);
+            return Json(result);
+        }
+
         /*
         // GET: CategoryController/Details/5
         public ActionResult Details(int id)
@@ -110,26 +130,13 @@ namespace EndPoint.Site.Areas.Admin.Controllers
             }
         }
 
+        // به دیلیت گت نیازی نیست فقط پست
         // GET: CategoryController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
 
-        // POST: CategoryController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         */
     }
