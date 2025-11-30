@@ -21,7 +21,7 @@
     <div class="card shadow-sm">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">لیست دسته‌بندی‌ها</h5>
-            <a asp-area="Admin" asp-controller="Categories" asp-action="CreateCategory" class="btn btn-success btn-sm">
+            <a asp-area="Admin" asp-controller="Categories" asp-action="Create" class="btn btn-success btn-sm">
                 افزودن دسته‌بندی جدید
             </a>
         </div>
@@ -37,7 +37,7 @@
             </form>
 
             <div class="table-responsive">
-                <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover align-middle">
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
@@ -54,8 +54,19 @@
                                 <td>@category.Name</td>
                                 <td>
                                     <div class="btn-group btn-group-sm">
-                                        <a href="#" class="btn btn-outline-warning disabled">ویرایش</a>
-                                        <a href="#" class="btn btn-outline-danger disabled">حذف</a>
+
+                                        @* دکمه ویرایش (با Tag Helper) *@
+                                        <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-outline-warning">
+                                            <i class="bi bi-pencil-square"></i> ویرایش
+                                        </a>
+
+                                        @* دکمه حذف (آماده برای جاوااسکریپت) *@
+                                        <button class="btn btn-outline-danger js-delete-category"
+                                                data-id="@category.Id"
+                                                data-name="@category.Name">
+                                            <i class="bi bi-trash"></i> حذف
+                                        </button>
+
                                     </div>
                                 </td>
                             </tr>
@@ -64,6 +75,11 @@
                 </table>
             </div>
 
+            @* فراموش نکنید که برای کار کردن این کد، باید:
+                1. پراپرتی 'Id' به GetCategoryDto اضافه شود.
+                2. خط @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers در بالای ویو یا در _ViewImports.cshtml وجود داشته باشد.
+                3. کد جاوااسکریپت برای مدیریت دکمه حذف (js-delete-category) اضافه شود.
+            *@
             <!-- صفحه‌بندی -->
             @if (pageCount > 1)
             {
@@ -82,3 +98,52 @@
         </div>
     </div>
 </div>
+
+@* ... تمام کد HTML شما تا قبل از این بخش ... *@
+
+
+@section Scripts {
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // ۱. پیدا کردن تمام دکمه‌های حذف در صفحه
+        const deleteButtons = document.querySelectorAll('.js-delete-category');
+
+        // این بخش‌ها برای نمایش مدال هستند (فرض می‌کنیم مدال را هم اضافه کرده‌اید)
+        // const deleteModal = new bootstrap.Modal(document.getElementById('deleteConfirmationModal'));
+        // const confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        // const categoryNameToDeleteSpan = document.getElementById('categoryNameToDelete');
+        // let categoryIdToDelete = null;
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const categoryId = this.dataset.id; // خواندن ID از data-id
+                const categoryName = this.dataset.name; // خواندن نام از data-name
+
+                // ۲. نمایش یک پاپ‌آپ تاییدیه ساده با confirm()
+                if (confirm(`آیا از حذف دسته‌بندی "${categoryName}" اطمینان دارید؟`)) {
+
+                    // ۳. اگر کاربر تایید کرد، درخواست Ajax را بفرست
+                    fetch(`/Admin/Categories/Delete/${categoryId}`, { // << توجه به URL
+                        method: 'POST',
+                        // هدرهای لازم مثل AntiForgeryToken
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.isSuccess) {
+                            alert('دسته‌بندی با موفقیت حذف شد.');
+                            // ردیف مربوطه را از جدول حذف کن
+                            document.querySelector(`button[data-id='${categoryId}']`).closest('tr').remove();
+                        } else {
+                            alert(`خطا: ${data.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('خطایی در ارتباط با سرور رخ داد.');
+                    });
+                }
+            });
+        });
+    });
+    </script>
+}
