@@ -35,14 +35,25 @@ namespace GymTest.Application.Services.Categories.Command
                     Message = "کتگوری مورد نظر یافت نشد"
                 };
             }
+            //زیرشاخه ها و اسپورتز  ای کالکشن هستن
+            //و کالکشن ها هرگز نال نمیشن حتی اگه یه لیست خالی باشن
+            // واسه همین از !=null استفاده نمیکنیم توی ایف ها
 
-            if (target.SubCategories != null)
+            if (target.SubCategories.Any())
             {
                 return new ResultDto()
                 {
                     IsSuccess = false,
                     Message = 
                     "فقط کتگوری هایی که هیچ زیرشاخه ای ندارند قابل حذف هستند"
+                };
+            }
+            if (target.Sports.Any())
+            {
+                return new ResultDto()
+                {
+                    IsSuccess = false,
+                    Message = "کتگوری ای که شامل ورزش هایی باشد، قابل حذف نیستند"
                 };
             }
 
