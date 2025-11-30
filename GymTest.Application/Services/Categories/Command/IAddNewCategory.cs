@@ -40,6 +40,19 @@ namespace GymTest.Application.Services.Categories.Command
                 };
             }
 
+            if (_context.Categories.Any(c => c.Name == request.Name))
+            {
+                return new ResultDto<ResultAddNewCategory> 
+                {
+                    Data = new ResultAddNewCategory()
+                    {
+
+                    },
+                    IsSuccess = false, Message = "نام دسته‌بندی تکراری است." 
+
+                };
+            }
+
             var newCategory = new Category()
             {
                 Name = request.Name,
