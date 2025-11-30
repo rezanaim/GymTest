@@ -220,7 +220,7 @@ namespace EndPoint.Site.Controllers
             
             // ۴. انجام عمل لاگین: رمزنگاری هویت کاربر در یک کوکی و ارسال آن به مرورگر.
             // اویت ر پاکیدم
-            HttpContext.SignInAsync(principal, properties);
+            await HttpContext.SignInAsync(principal, properties);
 
 
 
