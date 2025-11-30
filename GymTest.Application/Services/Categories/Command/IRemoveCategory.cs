@@ -1,5 +1,6 @@
 ﻿using Common;
 using GymTest.Application.Interfaces.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,10 @@ namespace GymTest.Application.Services.Categories.Command
 
         public ResultDto Execute(RequestRemoveCategory request)
         {
-            var target = _context.Categories.Find(request.CategoryId);
+            var target = _context.Categories
+                .Include(p=> p.SubCategories)
+                .Include(p=> p.Sports)
+                .FirstOrDefault(t=> t.Id == request.CategoryId);
 
             if (target == null)
             {
