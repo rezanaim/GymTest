@@ -35,7 +35,8 @@ namespace GymTest.Application.Services.Categories.Query
                 );
             }
 
-            var showList = query.ToPaged(request.PageNumber, pageSize, out int rowsCount)
+            var showList = query.OrderByDescending(p=> p.Id)
+                .ToPaged(request.PageNumber, pageSize, out int rowsCount)
                 .Select(p => new GetCategoryDto()
                 {
                     Name = p.Name,
