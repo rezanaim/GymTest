@@ -18,4 +18,8 @@
     <ProjectReference Include="..\GymTest.Domain\GymTest.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\Courses\Command\Add New Course to Usere\" />
+  </ItemGroup>
+
 </Project>

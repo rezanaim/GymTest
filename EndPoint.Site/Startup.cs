@@ -70,6 +70,8 @@ namespace EndPoint.Site
             services.AddScoped<IGetCategories, GetCategories>();
             services.AddScoped<IGetCourses, GetCourses>();
             services.AddScoped<IRemoveCategory, RemoveCategory>();
+            services.AddScoped<IEditCategory, EditCategory>();
+            services.AddScoped<IGetDataForEditCategory, GetDataForEditCategory>();
             
 
         }

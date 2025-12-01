@@ -16,19 +16,26 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         private readonly IGetCategories _getCategories;
         private readonly IAddNewCategory _addNewCategory;
         private readonly IRemoveCategory _removeCategory;
+        private readonly IEditCategory _editCategory;
+        private readonly IGetDataForEditCategory _getDataForEditCategory;
+        
 
 
         public CategoriesController(
             
             IGetCategories getCategories,
             IAddNewCategory addNewCategory,
-            IRemoveCategory removeCategory
+            IRemoveCategory removeCategory,
+            IEditCategory editCategory,
+            IGetDataForEditCategory getDataForEditCategory
             )
         {
 
             _getCategories = getCategories;
             _addNewCategory = addNewCategory;
             _removeCategory = removeCategory;
+            _editCategory = editCategory;
+            _getDataForEditCategory = getDataForEditCategory;
         }
         // GET: CategoryController
         public ActionResult Index(string searchKey = "", int pageNumber = 1)
@@ -100,6 +107,48 @@ namespace EndPoint.Site.Areas.Admin.Controllers
             return Json(result);
         }
 
+
+
+
+
+
+
+        // GET: CategoryController/Edit/5
+        [HttpGet]
+        public ActionResult Edit(long id)
+        {
+            var request = new RequestDataForEditCategory()
+            {
+                CategoryId = id
+            };
+
+            var result = _getDataForEditCategory.Execute(request);
+            if (result.IsSuccess == false)
+            {
+                return NotFound();
+            }
+
+            var allCategories = _getCategories.Execure(new RequestGetCategoriesDto { PageNumber = 1, SearchKey = "" }).Categories; //{ PageNumber = 1, SearchKey = "" });
+            ViewBag.Categories = new SelectList(allCategories, "Id", "Name", result.Data.ParentId);
+
+
+
+            return View(result.Data);
+        }
+
+        // POST: CategoryController/Edit/5
+        [HttpPost]
+        //[ValidateAntiForgeryToken]
+        public ActionResult Edit(RequestEditCategoryDto request)
+        {
+            var result = _editCategory.Execute(request);
+
+            return Json(result);
+        }
+
+
+
+
         /*
         // GET: CategoryController/Details/5
         public ActionResult Details(int id)
@@ -108,27 +157,6 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         
-
-        // GET: CategoryController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: CategoryController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
 
         // به دیلیت گت نیازی نیست فقط پست
         // GET: CategoryController/Delete/5
