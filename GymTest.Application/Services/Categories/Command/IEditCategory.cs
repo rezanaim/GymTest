@@ -50,7 +50,7 @@ namespace GymTest.Application.Services.Categories.Command
                 };
             }
 
-            var nameCheck = _context.Categories.Any(c => c.Name.Equals(request.Name));
+            var nameCheck = _context.Categories.Any(c => c.Name == request.Name && c.Id !=request.CategoryId);
             if (nameCheck)
             {
                 return new ResultDto()
@@ -60,6 +60,14 @@ namespace GymTest.Application.Services.Categories.Command
                 };
             }
 
+            if (target.Name == request.Name && target.ParentId == request.ParentCategoryId)
+            {
+                return new ResultDto()
+                {
+                    IsSuccess = false,
+                    Message = "هیچ ویرایشی صورت نگرفته است. تغییرات مورد نظر را اعمال کنید"
+                };
+            }
 
 
 

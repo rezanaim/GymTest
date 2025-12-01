@@ -29,7 +29,7 @@
                         <div class="mb-3">
                             <label for="ParentCategoryId" class="form-label">دسته‌بندی مادر</label>
                             @* ۴. نام فیلد باید "ParentCategoryId" باشد. مقدار پیش‌فرض از Model.ParentId خوانده می‌شود *@
-                            <select id="ParentCategoryId" name="ParentCategoryId" class="form-select" asp-items="@ViewBag.CategoriesList" asp-for="@Model.ParentId">
+                            <select id="ParentCategoryId" name="ParentCategoryId" class="form-select" asp-items="@ViewBag.Categories" asp-for="@Model.ParentId">
                                 <option value="">-- به عنوان دسته‌بندی اصلی --</option>
                             </select>
                         </div>
