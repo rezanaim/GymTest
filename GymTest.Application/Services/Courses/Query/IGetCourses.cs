@@ -33,6 +33,13 @@ namespace GymTest.Application.Services.Courses.Query
             .Include(p => p.Sport);
 
 
+            if (request.IsActive.HasValue)
+            {
+                CourseQuery = CourseQuery.Where(c => c.IsActive == request.IsActive);
+            }
+            //  اگه میخواستیم این شرط رو بین شرط های پایین بزاریم
+            // ازونجا که اهمیت "و" بالاتر از "یا" هست. اشکال توی کوئری مون پیش میومد
+            // پس جدا چک میکنیم
             if (!string.IsNullOrWhiteSpace(request.SearchKey))
             {
                 CourseQuery = CourseQuery.Where(p =>
@@ -44,6 +51,11 @@ namespace GymTest.Application.Services.Courses.Query
                 .Contains(request.SearchKey)
 
             ); }
+
+
+
+
+
 
             //var courseList = CourseQuery.ToPaged()
 
@@ -81,12 +93,17 @@ namespace GymTest.Application.Services.Courses.Query
     {
         public string SearchKey { get; set; }
         public int PageNumber { get; set; }
+
+        // برای چند کاربره کردن
+        public bool? IsActive { get; set; }
     }
 
     public class ResultGetCoursesDto
     {
         public List<CourseDto> CourseList { get; set; }
         public int TotalRows { get; set; }
+
+
     }
 
     public class CourseDto
