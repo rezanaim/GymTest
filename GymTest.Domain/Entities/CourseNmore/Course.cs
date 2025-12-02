@@ -10,6 +10,7 @@ namespace GymTest.Domain.Entities.CourseNmore
 {
     public class Course : BaseEntity
     {
+        public bool IsActive { get; set; } = true;
         public string Title { get; set; }
         public string Description { get; set; }
         //public string SportsName { get; set; }
