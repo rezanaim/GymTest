@@ -26,6 +26,7 @@ namespace EndPoint.Site.Controllers
         {
             var request = new RequestGetCoursesDto()
             {
+                IsActive = true,
                 SearchKey = searchKey,
                 PageNumber = pageNumber
             };

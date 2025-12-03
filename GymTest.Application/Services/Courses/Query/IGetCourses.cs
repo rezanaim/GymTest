@@ -74,7 +74,10 @@ namespace GymTest.Application.Services.Courses.Query
                     DurationInMins = p.DurationInMins,
                     LectureCount = p.LectureCount,
                     CoachName = (p.Coach.FirstName + " " + p.Coach.LastName),
-                    SportName = p.Sport.Name
+                    SportName = p.Sport.Name,
+                    Id = p.Id,
+                    IsActive = p.IsActive
+                    
 
                 }).ToList();
                 
@@ -108,6 +111,8 @@ namespace GymTest.Application.Services.Courses.Query
 
     public class CourseDto
     {
+        public long Id { get; set; }
+        public bool IsActive { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }

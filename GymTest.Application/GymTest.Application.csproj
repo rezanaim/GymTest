@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Courses\Command\Add New Course to Usere\" />
+    <Folder Include="Services\Courses\Command\Add New Course is in Usere\" />
   </ItemGroup>
 
 </Project>
