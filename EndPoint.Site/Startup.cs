@@ -21,6 +21,7 @@ using GymTest.Application.Services.Users.Query.GetDataForUpdateUser;
 using GymTest.Application.Services.Categories.Command;
 using GymTest.Application.Services.Categories.Query;
 using GymTest.Application.Services.Courses.Query;
+using GymTest.Application.Services.Courses.Command;
 
 namespace EndPoint.Site
 
@@ -72,6 +73,8 @@ namespace EndPoint.Site
             services.AddScoped<IRemoveCategory, RemoveCategory>();
             services.AddScoped<IEditCategory, EditCategory>();
             services.AddScoped<IGetDataForEditCategory, GetDataForEditCategory>();
+            services.AddScoped<IDeleteCourseByAdmin, DeleteCourseByAdmin>();
+            services.AddScoped<IDeactiveCourseByAdmin, DeactiveCourseByAdmin>();
             
 
         }
