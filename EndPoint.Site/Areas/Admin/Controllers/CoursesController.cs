@@ -20,6 +20,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
             IGetCourses getCourses,
             IEditCourseByAdmin deactiveCourseByAdmin,
             IDeleteCourseByAdmin deleteCourseByAdmin
+            
 
             )
         {
@@ -77,18 +78,11 @@ namespace EndPoint.Site.Areas.Admin.Controllers
 
         // POST: CourseController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id)
+        //{
+
+        //}
 
         /*
         // GET: CourseController/Delete/5

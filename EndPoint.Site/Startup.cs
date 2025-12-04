@@ -22,6 +22,7 @@ using GymTest.Application.Services.Categories.Command;
 using GymTest.Application.Services.Categories.Query;
 using GymTest.Application.Services.Courses.Query;
 using GymTest.Application.Services.Courses.Command;
+using GymTest.Application.Services.Sports.Query;
 
 namespace EndPoint.Site
 
@@ -75,6 +76,8 @@ namespace EndPoint.Site
             services.AddScoped<IGetDataForEditCategory, GetDataForEditCategory>();
             services.AddScoped<IDeleteCourseByAdmin, DeleteCourseByAdmin>();
             services.AddScoped<IEditCourseByAdmin, EditCourseByAdmin>();
+            services.AddScoped<IGetDataForEditCourse, GetDataForEditCourse>();
+            services.AddScoped<IGetSports, GetSports>();
             
 
         }
