@@ -92,6 +92,15 @@ namespace GymTest.Application.Services.Users.Command
                 };
             }
 
+            if (!string.IsNullOrWhiteSpace(request.Password) && request.Password.Length < 5)
+            {
+                return new ResultDto()
+                {
+                    IsSuccess = false,
+                    Message = "پسورد باید حداقل 5 کاراکتر باشد"
+                };
+            }
+
 
             if (!string.IsNullOrWhiteSpace(request.Password))
             {
