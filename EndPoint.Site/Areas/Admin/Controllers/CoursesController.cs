@@ -1,7 +1,9 @@
 ﻿using GymTest.Application.Services.Courses.Command;
 using GymTest.Application.Services.Courses.Query;
+using GymTest.Application.Services.Sports.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,20 +15,27 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     public class CoursesController : Controller
     {
         private readonly IGetCourses _getCourses;
-        private readonly IEditCourseByAdmin _deactiveCourseByAdmin;
+        private readonly IEditCourseByAdmin _editCourseByAdmin;
         private readonly IDeleteCourseByAdmin _deleteCourseByAdmin;
+        private readonly IGetDataForEditCourse _getDataForEditCourse;
+        private readonly IGetSports _getSports;
 
         public CoursesController(
             IGetCourses getCourses,
-            IEditCourseByAdmin deactiveCourseByAdmin,
-            IDeleteCourseByAdmin deleteCourseByAdmin
-            
+            IEditCourseByAdmin editCourseByAdmin,
+            IDeleteCourseByAdmin deleteCourseByAdmin,
+            IGetDataForEditCourse getDataForEditCourse,
+            IGetSports getSports
+
+
 
             )
         {
             _getCourses = getCourses;
-            _deactiveCourseByAdmin = deactiveCourseByAdmin;
+            _editCourseByAdmin = editCourseByAdmin;
             _deleteCourseByAdmin = deleteCourseByAdmin;
+            _getDataForEditCourse = getDataForEditCourse;
+            _getSports = getSports;
         }
 
         // GET: CourseController
@@ -71,18 +80,41 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: CourseController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Edit(long id)
         {
-            return View();
+            var request = new RequestDataForEditCourseByAdmin()
+            {
+                CourseId = id
+            };
+            var courseResult = _getDataForEditCourse.Execute(request);
+            if (courseResult.IsSuccess == false)
+            {
+                return NotFound();
+            }
+
+            var courseData = courseResult.Data;
+
+            var requestSports = new RequestGetSportsDto()
+            {
+                PageNumber = 1,
+                SearchKey = ""
+            };
+            var allSports = _getSports.Execute(requestSports).SportsList;
+            ViewBag.SportsList = new SelectList(allSports, "Id", "Name", courseData.SportId);
+ 
+            return View(courseData);
         }
 
         // POST: CourseController/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id)
-        //{
+        public ActionResult Edit(RequestEditCourseByAdmin request)
+        {
+            var result = _editCourseByAdmin.Execute(request);
 
-        //}
+            return Json(result);
+
+        }
 
         /*
         // GET: CourseController/Delete/5
