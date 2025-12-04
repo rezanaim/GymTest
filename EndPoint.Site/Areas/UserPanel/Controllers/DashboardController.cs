@@ -1,4 +1,5 @@
-﻿using GymTest.Application.Services.Users.Command;
+﻿using GymTest.Application.Services.Sports.Query;
+using GymTest.Application.Services.Users.Command;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -16,18 +17,23 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
     {
 
         private readonly IAddNewCourse _addNewCourse;
+        private readonly IGetSports _getSports;
 
-
-        public DashboardController(IAddNewCourse addNewCourse)
+        public DashboardController(
+            IAddNewCourse addNewCourse,
+            IGetSports getSports
+            )
         {
             _addNewCourse = addNewCourse;
+            _getSports = getSports;
         }
 
 
         // GET: DashboardController
-        public ActionResult Index()
+        public ActionResult Index( )
         {
 
+ 
             // نمایش مشخصا کاربر باید اکشن دیفالت پنل کاربری باشه
             return View();
         }
@@ -42,6 +48,13 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         [HttpGet]
         public ActionResult CreateCourse()
         {
+            var showSports = _getSports.Execute(new RequestGetSportsDto()
+            {
+                PageNumber = 1,
+                SearchKey = ""
+            });
+
+            ViewBag.SportsList = new SelectList(showSports.SportsList, "Id", "Name");
 
             return View();
         }
