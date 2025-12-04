@@ -1,4 +1,5 @@
-﻿using GymTest.Application.Services.Courses.Query;
+﻿using GymTest.Application.Services.Courses.Command;
+using GymTest.Application.Services.Courses.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,10 +13,19 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     public class CoursesController : Controller
     {
         private readonly IGetCourses _getCourses;
+        private readonly IEditCourseByAdmin _deactiveCourseByAdmin;
+        private readonly IDeleteCourseByAdmin _deleteCourseByAdmin;
 
-        public CoursesController(IGetCourses getCourses)
+        public CoursesController(
+            IGetCourses getCourses,
+            IEditCourseByAdmin deactiveCourseByAdmin,
+            IDeleteCourseByAdmin deleteCourseByAdmin
+
+            )
         {
             _getCourses = getCourses;
+            _deactiveCourseByAdmin = deactiveCourseByAdmin;
+            _deleteCourseByAdmin = deleteCourseByAdmin;
         }
 
         // GET: CourseController
@@ -80,25 +90,26 @@ namespace EndPoint.Site.Areas.Admin.Controllers
             }
         }
 
+        /*
         // GET: CourseController/Delete/5
         public ActionResult Delete(int id)
         {
             return View();
         }
-
+        */
         // POST: CourseController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
         {
-            try
+            var request = new RequestDeleteCourseByAdmin()
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+                CourseId = id,
+            };
+
+            var result = _deleteCourseByAdmin.Execute(request);
+            return Json(result);
+            
         }
     }
 }

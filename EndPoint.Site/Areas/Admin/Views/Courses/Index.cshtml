@@ -17,8 +17,9 @@
 }
 
 <div class="card shadow-sm">
-    <div class="card-header">
+    <div class="card-header d-flex justify-content-between align-items-center">
         <h5 class="mb-0">لیست دوره‌ها</h5>
+        <a asp-action="Create" class="btn btn-success btn-sm">افزودن دوره جدید</a>
     </div>
     <div class="card-body">
 
@@ -29,8 +30,8 @@
             <div class="col-md-4">
                 <select name="IsActive" class="form-select">
                     <option value="">-- همه وضعیت‌ها --</option>
-                    <option value="true" selected="@(isActiveFilter == " true")">فقط فعال</option>
-                    <option value="false" selected="@(isActiveFilter == " false")">فقط غیرفعال</option>
+                    <option value="true" selected="@(isActiveFilter == "true")">فقط فعال</option>
+                    <option value="false" selected="@(isActiveFilter == "false")">فقط غیرفعال</option>
                 </select>
             </div>
             <div class="col-md-3">
@@ -53,28 +54,28 @@
                 <tbody>
                     @foreach (var course in Model.CourseList)
                     {
-                    <tr id="courseRow-@course.Id">
-                        <td>@course.Id</td>
-                        <td>@course.Title</td>
-                        <td>@course.CoachName</td>
-                        <td>@course.SportName</td>
-                        <td>
-                            @if (course.IsActive)
-                            {
-                            <span class="badge bg-success">فعال</span>
-                            }
-                            else
-                            {
-                            <span class="badge bg-danger">غیرفعال</span>
-                            }
-                        </td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-outline-warning">ویرایش</a>
-                                <button class="btn btn-outline-danger js-delete-course" data-id="@course.Id" data-name="@course.Title">حذف</button>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr id="courseRow-@course.Id">
+                            <td>@course.Id</td>
+                            <td>@course.Title</td>
+                            <td>@course.CoachName</td>
+                            <td>@course.SportName</td>
+                            <td>
+                                @if (course.IsActive)
+                                {
+                                    <span class="badge bg-success">فعال</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">غیرفعال</span>
+                                }
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a asp-action="Edit" asp-route-id="@course.Id" class="btn btn-outline-warning">ویرایش</a>
+                                    <button class="btn btn-outline-danger js-delete-course" data-id="@course.Id" data-name="@course.Title">حذف</button>
+                                </div>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>
@@ -82,22 +83,63 @@
 
         @if (pageCount > 1)
         {
-        <nav class="d-flex justify-content-center mt-4">
-            <ul class="pagination">
-                @for (int i = 1; i <= pageCount; i++)
-                {
-                <li class="page-item @(i == currentPage ? " active" : "" )">
-                    <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-searchKey="@searchKey" asp-route-IsActive="@isActiveFilter">@i</a>
-                </li>
-                }
-            </ul>
-        </nav>
+            <nav class="d-flex justify-content-center mt-4">
+                <ul class="pagination">
+                    @for (int i = 1; i <= pageCount; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-searchKey="@searchKey" asp-route-IsActive="@isActiveFilter">@i</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
         }
     </div>
 </div>
 
+@* ================== کد جاوااسکریپت برای دکمه حذف ================== *@
 @section Scripts {
-<script>
-    // کد جاوااسکریپت برای دکمه حذف در اینجا قرار خواهد گرفت
-</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.js-delete-course');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const courseId = this.dataset.id;
+                    const courseName = this.dataset.name;
+
+                    if (confirm(`آیا از حذف دوره "${courseName}" اطمینان دارید؟`)) {
+
+                        // مطمئن شوید که URL با کنترلر و اکشن شما مطابقت دارد
+                        fetch(`/Admin/Courses/Delete/${courseId}`, {
+                            method: 'POST',
+                            headers: {
+                                // هدر AntiForgeryToken در صورت نیاز
+                            },
+                        })
+                            .then(response => {
+                                if (!response.ok) {
+                                    // در صورت بروز خطا (مثل 404 یا 500)، پیام خطا را نمایش بده
+                                    return response.text().then(text => { throw new Error(text || `خطای سرور: ${response.status}`) });
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                if (data.isSuccess) {
+                                    alert(data.message);
+                                    // ردیف مربوطه را از جدول در UI حذف کن
+                                    document.getElementById(`courseRow-${courseId}`).remove();
+                                } else {
+                                    alert(`خطا: ${data.message}`);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                alert('یک خطای پیش‌بینی نشده در هنگام حذف رخ داد.');
+                            });
+                    }
+                });
+            });
+        });
+    </script>
 }

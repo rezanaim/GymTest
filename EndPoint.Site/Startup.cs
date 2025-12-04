@@ -74,7 +74,7 @@ namespace EndPoint.Site
             services.AddScoped<IEditCategory, EditCategory>();
             services.AddScoped<IGetDataForEditCategory, GetDataForEditCategory>();
             services.AddScoped<IDeleteCourseByAdmin, DeleteCourseByAdmin>();
-            services.AddScoped<IDeactiveCourseByAdmin, DeactiveCourseByAdmin>();
+            services.AddScoped<IEditCourseByAdmin, EditCourseByAdmin>();
             
 
         }
