@@ -4,10 +4,14 @@
     ViewData["Title"] = "مدیریت ورزش‌ها";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
-    // --- محاسبات برای صفحه‌بندی ---
-    int pageSize = 5;
+    // --- محاسبات صفحه‌بندی بر اساس بک‌اند ---
+    int pageSize = 25; // ۱. هماهنگ با pageSize در سرویس شما
     int currentPage = 1;
-    if (Context.Request.Query.ContainsKey("page")) { int.TryParse(Context.Request.Query["page"], out currentPage); }
+    // ۲. خواندن پارامتر PageNumber از URL
+    if (Context.Request.Query.ContainsKey("PageNumber"))
+    {
+        int.TryParse(Context.Request.Query["PageNumber"], out currentPage);
+    }
     var searchKey = Context.Request.Query["searchKey"];
     int pageCount = (Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
 }
@@ -32,17 +36,18 @@
             <table class="table table-bordered table-hover">
                 <thead class="table-light">
                     <tr>
-                        <th>شناسه</th>
+                        <th>#</th>
                         <th>نام ورزش</th>
                         <th>دسته‌بندی</th>
                         <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
+                    @{ int row = ((currentPage - 1) * pageSize) + 1; } @* ۳. این محاسبه حالا درست است *@
                     @foreach (var sport in Model.SportsList)
                     {
                         <tr>
-                            <td>@sport.Id</td>
+                            <td>@(row++)</td>
                             <td>@sport.Name</td>
                             <td>@sport.Category</td>
                             <td>
@@ -65,7 +70,8 @@
                     @for (int i = 1; i <= pageCount; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-page="@i" asp-route-searchKey="@searchKey">@i</a>
+                            @* ۴. ارسال پارامتر با نام صحیح PageNumber *@
+                            <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-searchKey="@searchKey">@i</a>
                         </li>
                     }
                 </ul>
@@ -76,6 +82,6 @@
 
 @section Scripts {
     <script>
-    // در اینجا باید کد جاوااسکریپت برای دکمه‌های حذف ورزش (js-delete-sport) قرار گیرد
+        // کد جاوااسکریپت برای دکمه حذف (js-delete-sport) در اینجا قرار خواهد گرفت
     </script>
 }
