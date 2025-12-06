@@ -11,7 +11,7 @@ namespace GymTest.Application.Services.Categories.Query
 {
     public interface IGetCategories
     {
-        ResultGetCategoriesDto Execure(RequestGetCategoriesDto request);
+        ResultGetCategoriesDto Execute(RequestGetCategoriesDto request);
     }
 
     public class GetCategories : IGetCategories
@@ -23,7 +23,7 @@ namespace GymTest.Application.Services.Categories.Query
             _context = context;
         }
 
-        public ResultGetCategoriesDto Execure(RequestGetCategoriesDto request)
+        public ResultGetCategoriesDto Execute(RequestGetCategoriesDto request)
         {
             const int pageSize = 5;
             IQueryable<Category> query = _context.Categories;
