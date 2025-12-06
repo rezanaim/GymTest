@@ -23,6 +23,7 @@ using GymTest.Application.Services.Categories.Query;
 using GymTest.Application.Services.Courses.Query;
 using GymTest.Application.Services.Courses.Command;
 using GymTest.Application.Services.Sports.Query;
+using GymTest.Application.Services.Sports.Command;
 
 namespace EndPoint.Site
 
@@ -78,6 +79,7 @@ namespace EndPoint.Site
             services.AddScoped<IEditCourseByAdmin, EditCourseByAdmin>();
             services.AddScoped<IGetDataForEditCourse, GetDataForEditCourse>();
             services.AddScoped<IGetSports, GetSports>();
+            services.AddScoped<IAddNewSport, AddNewSport>();
             
 
         }

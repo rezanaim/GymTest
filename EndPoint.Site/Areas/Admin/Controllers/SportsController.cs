@@ -1,6 +1,9 @@
-﻿using GymTest.Application.Services.Sports.Query;
+﻿using GymTest.Application.Services.Categories.Query;
+using GymTest.Application.Services.Sports.Command;
+using GymTest.Application.Services.Sports.Query;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +15,19 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     public class SportsController : Controller
     {
         private readonly IGetSports _getSports;
-        public SportsController(IGetSports getSports)
+        private readonly IAddNewSport _addNewSport;
+        private readonly IGetCategories _getCategories;
+        public SportsController(
+            
+            IGetSports getSports,
+            IAddNewSport addNewSport,
+            IGetCategories getCategories
+            )
         {
             _getSports = getSports;
+            _addNewSport = addNewSport;
+            _getCategories = getCategories;
+
         }
 
 
@@ -44,24 +57,31 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: SportsController/Create
-        public ActionResult Create()
+        [HttpGet]
+        public ActionResult Create( )
         {
+            var request = new RequestGetCategoriesDto()
+            {
+                SearchKey = "",
+                PageNumber = 1
+            };
+            var allCategoriesList = _getCategories.Execute(request).Categories;
+
+            ViewBag.CategoriesList = new SelectList(allCategoriesList, "Id", "Name");
+
             return View();
         }
 
         // POST: SportsController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Create(RequestAddNewSportDto request)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+
+
+            var result = _addNewSport.Execute(request);
+
+            return Json(result);
         }
 
         // GET: SportsController/Edit/5
