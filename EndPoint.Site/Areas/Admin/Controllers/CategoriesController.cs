@@ -45,7 +45,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
                 PageNumber = pageNumber,
                 SearchKey = searchKey
             };
-            var actionResult = _getCategories.Execure(request);
+            var actionResult = _getCategories.Execute(request);
             return View(actionResult);
         }
 
@@ -55,7 +55,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         {
 
             // ۱. نتیجه کامل را از سرویس بگیر
-            var categoriesResult = _getCategories.Execure(new RequestGetCategoriesDto { PageNumber = 1, SearchKey = "" });
+            var categoriesResult = _getCategories.Execute(new RequestGetCategoriesDto { PageNumber = 1, SearchKey = "" });
 
             // ۲. لیست دسته‌بندی‌ها را مستقیماً از پراپرتی Categories بخوان
              var parentCategories = categoriesResult.Categories;
@@ -128,7 +128,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var allCategories = _getCategories.Execure(new RequestGetCategoriesDto { PageNumber = 1, SearchKey = "" }).Categories; //{ PageNumber = 1, SearchKey = "" });
+            var allCategories = _getCategories.Execute(new RequestGetCategoriesDto { PageNumber = 1, SearchKey = "" }).Categories; //{ PageNumber = 1, SearchKey = "" });
             ViewBag.Categories = new SelectList(allCategories, "Id", "Name", result.Data.ParentId);
 
 
