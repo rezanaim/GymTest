@@ -25,7 +25,7 @@ namespace GymTest.Application.Services.Courses.Command
 
         public ResultDto Execute(RequestEditCourseByAdmin request)
         {
-            var target = _context.Courses.Find(request.CourseId);
+            var target = _context.Courses.FirstOrDefault(c=> c.Id == request.CourseId);
 
             if (target == null)
             {

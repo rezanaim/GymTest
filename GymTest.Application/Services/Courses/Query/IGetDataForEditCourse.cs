@@ -50,7 +50,9 @@ namespace GymTest.Application.Services.Courses.Query
                 Title = target.Title,
                 Description = target.Description,
                 Price = target.Price,
-                SportId = target.SportId
+                SportId = target.SportId,
+                CourseId = target.Id
+                
 
             };
 
