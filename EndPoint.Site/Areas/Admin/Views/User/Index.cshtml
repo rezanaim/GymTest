@@ -4,7 +4,6 @@
     ViewData["Title"] = "لیست کاربران";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
-    // --- محاسبات برای صفحه‌بندی ---
     int pageSize = 5;
     int currentPage = 1;
     if (Context.Request.Query.ContainsKey("page"))
@@ -12,6 +11,15 @@
         int.TryParse(Context.Request.Query["page"], out currentPage);
     }
     var searchKey = Context.Request.Query["searchKey"];
+
+    bool? isActiveFilter = null;
+    if (Context.Request.Query.ContainsKey("IsActive"))
+    {
+        var isActiveValue = Context.Request.Query["IsActive"].ToString();
+        if (isActiveValue == "true") isActiveFilter = true;
+        else if (isActiveValue == "false") isActiveFilter = false;
+    }
+
     int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
 }
 
@@ -21,13 +29,46 @@
     </div>
     <div class="card-body">
 
-        <form action="/Admin/User/Index" method="get" class="row g-3 mb-4">
-            <div class="col-md-6">
-                <div class="input-group">
-                    <input type="text" name="searchKey" class="form-control" placeholder="جستجو..." value="@searchKey">
-                    <button class="btn btn-primary" type="submit">
-                        <i class="bi bi-search"></i> بگرد
+        <form action="/Admin/User/Index" method="get" class="row g-3 mb-4 align-items-end">
+            <!-- جستجو -->
+            <div class="col-md-5">
+                <label class="form-label">جستجو</label>
+                <input type="text" name="searchKey" class="form-control" placeholder="نام، ایمیل..." value="@searchKey">
+            </div>
+
+            <!-- فیلتر وضعیت -->
+            <div class="col-md-4">
+                <label class="form-label">وضعیت کاربر</label>
+                <select name="IsActive" class="form-select">
+                    <option value="">همه</option>
+                    @if (isActiveFilter == true)
+                    {
+                        <option value="true" selected>فقط فعال‌ها</option>
+                    }
+                    else
+                    {
+                        <option value="true">فقط فعال‌ها</option>
+                    }
+                    @if (isActiveFilter == false)
+                    {
+                        <option value="false" selected>فقط غیرفعال‌ها</option>
+                    }
+                    else
+                    {
+                        <option value="false">فقط غیرفعال‌ها</option>
+                    }
+                </select>
+            </div>
+
+            <!-- دکمه‌ها -->
+            <div class="col-md-3">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-primary flex-grow-1" type="submit">
+                        <i class="bi bi-search"></i> جستجو
                     </button>
+                    <a href="/Admin/User/Index" class="btn btn-outline-secondary">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
                 </div>
             </div>
         </form>
@@ -41,26 +82,28 @@
                         <th>ایمیل</th>
                         <th>نقش‌ها</th>
                         <th>وضعیت</th>
-                        <th>عملیات</th> <!-- ۱. ستون جدید -->
+                        <th>عملیات</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var user in Model.Users)
                     {
                         <tr id="userRow_@user.UserId">
-                            <!-- ۲. ID برای ردیف -->
                             <td>@user.UserId</td>
                             <td>@user.FirstName @user.LastName</td>
                             <td>@user.Email</td>
                             <td>@string.Join("، ", user.Roles)</td>
                             <td>
                                 @if (user.IsActive)
-                                {<span class="badge bg-success">فعال</span> }
+                                {
+                                    <span class="badge bg-success">فعال</span>
+                                }
                                 else
-                                { <span class="badge bg-danger">غیرفعال</span>}
+                                {
+                                    <span class="badge bg-danger">غیرفعال</span>
+                                }
                             </td>
                             <td>
-                                <!-- ۳. سلول جدید برای دکمه‌ها -->
                                 <div class="btn-group btn-group-sm">
                                     <a asp-action="Edit" asp-route-id="@user.UserId" class="btn btn-outline-warning">ویرایش</a>
                                     <button class="btn btn-outline-danger js-delete-user"
@@ -82,12 +125,21 @@
                 <ul class="pagination">
                     @for (int i = 1; i <= pageCount; i++)
                     {
-                        <li class="page-item @(i == currentPage ? "active" : "")">
-                            @{
-                                var url = $"/Admin/User/Index?page={i}&searchKey={searchKey}";
-                            }
-                            <a class="page-link" href="@url">@i</a>
-                        </li>
+                        var isActiveParam = isActiveFilter.HasValue ? "&IsActive=" + isActiveFilter.ToString().ToLower() : "";
+                        var url = "/Admin/User/Index?page=" + i + "&searchKey=" + searchKey + isActiveParam;
+
+                        if (i == currentPage)
+                        {
+                            <li class="page-item active">
+                                <a class="page-link" href="@url">@i</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@url">@i</a>
+                            </li>
+                        }
                     }
                 </ul>
             </nav>
@@ -96,7 +148,7 @@
 </div>
 
 
-<!-- ۴. کد HTML برای Modal (پاپ‌آپ) -->
+<!-- Modal حذف -->
 <div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -116,7 +168,6 @@
 </div>
 
 
-<!-- ۵. کد JavaScript برای مدیریت حذف -->
 @section Scripts {
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -132,45 +183,34 @@
                 button.addEventListener('click', function () {
                     userIdToDelete = this.getAttribute('data-user-id');
                     var userName = this.getAttribute('data-user-name');
-
-                    userNameToDeleteSpan.textContent = `"${userName}"`;
+                    userNameToDeleteSpan.textContent = '"' + userName + '"';
                     deleteModal.show();
                 });
             });
 
             confirmDeleteButton.addEventListener('click', function () {
                 if (userIdToDelete) {
-                    // ارسال درخواست POST به اکشن Delete
-                    fetch(`/Admin/User/Delete/${userIdToDelete}`, {
-                        method: 'POST',
-                        headers: {
-                            // AntiForgeryToken در صورت نیاز اینجا اضافه می‌شود
-                        }
+                    fetch('/Admin/User/Delete/' + userIdToDelete, {
+                        method: 'POST'
                     })
-                        .then(response => {
-                            // بررسی اینکه آیا پاسخ موفقیت‌آمیز است یا نه
-                            if (!response.ok) {
-                                // اگر 404 یا 500 بود، خطا را پرتاب کن
-                                throw new Error(`خطای شبکه: ${response.status}`);
-                            }
+                        .then(function (response) {
+                            if (!response.ok) throw new Error('خطای شبکه: ' + response.status);
                             return response.json();
                         })
-                        .then(data => {
+                        .then(function (data) {
                             if (data.isSuccess) {
-                                var rowToDelete = document.getElementById(`userRow_${userIdToDelete}`);
-                                if (rowToDelete) {
-                                    rowToDelete.remove();
-                                }
+                                var rowToDelete = document.getElementById('userRow_' + userIdToDelete);
+                                if (rowToDelete) rowToDelete.remove();
                                 alert(data.message);
                             } else {
-                                alert(`خطا: ${data.message}`);
+                                alert('خطا: ' + data.message);
                             }
                         })
-                        .catch(error => {
+                        .catch(function (error) {
                             console.error('Error:', error);
                             alert('خطایی در ارتباط با سرور رخ داد.');
                         })
-                        .finally(() => {
+                        .finally(function () {
                             deleteModal.hide();
                         });
                 }

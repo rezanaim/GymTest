@@ -41,13 +41,14 @@ namespace EndPoint.Site.Areas.Admin.Controllers
 
 
         // GET: UserController1
-        
-        public ActionResult Index(string searchKey = "", int page = 1)
+
+        public ActionResult Index(string searchKey = "", int page = 1, bool? IsActive = null)
         {
             var request = new RequestGetUserDto()
             {
                 PageNumber = page,
-                SearchKey = searchKey
+                SearchKey = searchKey,
+                IsActive = IsActive
             };
             var result = _getUsers.Execute(request);
             return View(result);

@@ -104,6 +104,11 @@ namespace GymTest.Application.Services.Users.Query.GetUser
                 );
             }
 
+            if (request.IsActive.HasValue)
+            {
+                usersQ = usersQ.Where(u => u.IsActive == request.IsActive);
+            }
+
             //int rowsCount = 0;
             var userList = usersQ.ToPaged(request.PageNumber, pageSize, out int rowsCount)
             .Select(p => new GetUserDto()
@@ -192,6 +197,7 @@ namespace GymTest.Application.Services.Users.Query.GetUser
     {
         public string SearchKey { get; set; }
         public int PageNumber { get; set; }
+        public bool? IsActive { get; set; }
     }
 
     public class ResultGetUserDto
