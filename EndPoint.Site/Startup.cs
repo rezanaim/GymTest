@@ -81,6 +81,8 @@ namespace EndPoint.Site
             services.AddScoped<IGetSports, GetSports>();
             services.AddScoped<IAddNewSport, AddNewSport>();
             services.AddScoped<IRemoveSport, RemoveSport>();
+            services.AddScoped<IEditSport, EditSport>();
+            services.AddScoped<IGetDataForEditSport, GetDataForEditSport>();
             
 
         }

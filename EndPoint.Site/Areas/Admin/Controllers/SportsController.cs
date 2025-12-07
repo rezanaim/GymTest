@@ -18,18 +18,27 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         private readonly IAddNewSport _addNewSport;
         private readonly IGetCategories _getCategories;
         private readonly IRemoveSport _removeSport;
+        private readonly IEditSport _editSport;
+        private readonly IGetDataForEditSport _getDataForEditSport;
+
         public SportsController(
-            
+
             IGetSports getSports,
             IAddNewSport addNewSport,
             IGetCategories getCategories,
-            IRemoveSport removeSport
+            IRemoveSport removeSport,
+            IEditSport editSport,
+            IGetDataForEditSport getDataForEditSport
+
             )
         {
             _getSports = getSports;
             _addNewSport = addNewSport;
             _getCategories = getCategories;
             _removeSport = removeSport;
+            _editSport = editSport;
+            _getDataForEditSport = getDataForEditSport;
+
         }
 
 
@@ -87,24 +96,39 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: SportsController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult Edit(long id)
         {
-            return View();
+            var result = _getDataForEditSport.Execute(id);
+            
+            if (result.IsSuccess == false)
+            {
+                return NotFound();
+
+            }
+            var resultData = result.Data;
+
+            var resultGetCategories = _getCategories.Execute(new RequestGetCategoriesDto()
+            {
+                SearchKey = "",
+                PageNumber = 1
+            });
+
+            var categories = resultGetCategories.Categories;
+
+            ViewBag.CategoryList = new SelectList(categories, "Id", "Name", resultData.CategoryId);
+            
+            return View(resultData);
         }
 
         // POST: SportsController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Edit(RequestEditSport request)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var result = _editSport.Execute(request);
+            return Json(result);
+
         }
 
 
