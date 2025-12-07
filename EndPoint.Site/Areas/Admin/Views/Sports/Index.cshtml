@@ -4,10 +4,8 @@
     ViewData["Title"] = "مدیریت ورزش‌ها";
     Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
 
-    // --- محاسبات صفحه‌بندی بر اساس بک‌اند ---
-    int pageSize = 25; // ۱. هماهنگ با pageSize در سرویس شما
+    int pageSize = 25;
     int currentPage = 1;
-    // ۲. خواندن پارامتر PageNumber از URL
     if (Context.Request.Query.ContainsKey("PageNumber"))
     {
         int.TryParse(Context.Request.Query["PageNumber"], out currentPage);
@@ -43,17 +41,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @{ int row = ((currentPage - 1) * pageSize) + 1; } @* ۳. این محاسبه حالا درست است *@
+                    @{ int row = ((currentPage - 1) * pageSize) + 1; }
                     @foreach (var sport in Model.SportsList)
                     {
-                        <tr>
+                        <tr id="row-@sport.Id">
                             <td>@(row++)</td>
                             <td>@sport.Name</td>
                             <td>@sport.Category</td>
                             <td>
                                 <div class="btn-group btn-group-sm">
-                                    <a asp-action="Edit" asp-route-id="@sport.Id" class="btn btn-outline-warning">ویرایش</a>
-                                    <button class="btn btn-outline-danger js-delete-sport" data-id="@sport.Id" data-name="@sport.Name">حذف</button>
+                                    <a href="@Url.Action("Edit", "Sports", new { area = "Admin", id = sport.Id })" class="btn btn-outline-warning">ویرایش</a>
+                                    <button type="button" class="btn btn-outline-danger" onclick="deleteSport(@sport.Id, '@sport.Name')">حذف</button>
                                 </div>
                             </td>
                         </tr>
@@ -62,7 +60,6 @@
             </table>
         </div>
 
-        <!-- صفحه‌بندی -->
         @if (pageCount > 1)
         {
             <nav class="d-flex justify-content-center mt-4">
@@ -70,7 +67,6 @@
                     @for (int i = 1; i <= pageCount; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            @* ۴. ارسال پارامتر با نام صحیح PageNumber *@
                             <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-searchKey="@searchKey">@i</a>
                         </li>
                     }
@@ -80,8 +76,33 @@
     </div>
 </div>
 
-@section Scripts {
-    <script>
-        // کد جاوااسکریپت برای دکمه حذف (js-delete-sport) در اینجا قرار خواهد گرفت
-    </script>
-}
+<script>
+    function deleteSport(id, name) {
+        if (!confirm('آیا از حذف ورزش "' + name + '" مطمئن هستید؟')) {
+            return;
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', '/Admin/Sports/Delete', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    alert(response.message);
+                    if (response.isSuccess) {
+                        var row = document.getElementById('row-' + id);
+                        if (row) {
+                            row.remove();
+                        }
+                    }
+                } else {
+                    alert('خطا در برقراری ارتباط با سرور');
+                }
+            }
+        };
+
+        xhr.send('id=' + id);
+    }
+</script>

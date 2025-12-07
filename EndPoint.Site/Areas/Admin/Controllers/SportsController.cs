@@ -17,17 +17,19 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         private readonly IGetSports _getSports;
         private readonly IAddNewSport _addNewSport;
         private readonly IGetCategories _getCategories;
+        private readonly IRemoveSport _removeSport;
         public SportsController(
             
             IGetSports getSports,
             IAddNewSport addNewSport,
-            IGetCategories getCategories
+            IGetCategories getCategories,
+            IRemoveSport removeSport
             )
         {
             _getSports = getSports;
             _addNewSport = addNewSport;
             _getCategories = getCategories;
-
+            _removeSport = removeSport;
         }
 
 
@@ -105,25 +107,14 @@ namespace EndPoint.Site.Areas.Admin.Controllers
             }
         }
 
-        // GET: SportsController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
 
-        // POST: SportsController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Delete(long id)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var result = _removeSport.Execute(id);
+
+            return Json(result);
         }
     }
 }
