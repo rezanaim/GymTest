@@ -1,5 +1,6 @@
 ﻿using GymTest.Application.Services.Sports.Query;
 using GymTest.Application.Services.Users.Command;
+using GymTest.Application.Services.Users.Query.GetUserDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,24 +19,29 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
 
         private readonly IAddNewCourse _addNewCourse;
         private readonly IGetSports _getSports;
+        private readonly IGetUserDetails _getUserDetails;
 
         public DashboardController(
             IAddNewCourse addNewCourse,
-            IGetSports getSports
+            IGetSports getSports,
+            IGetUserDetails getUserDetails
             )
         {
             _addNewCourse = addNewCourse;
             _getSports = getSports;
+            _getUserDetails = getUserDetails;
         }
 
 
         // GET: DashboardController
-        public ActionResult Index( )
+        public ActionResult Index()
         {
-
+            var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var details = _getUserDetails.Execute(userId);
+            //ای دی رو به جای ورودی اکشن و خوندن از  یو ار ال
+            // ک خطرناکه از نظر امنیتی. از کلیم یوزر میخونیم
  
-            // نمایش مشخصا کاربر باید اکشن دیفالت پنل کاربری باشه
-            return View();
+            return View(details.Data);
         }
 
         // GET: DashboardController/Details/5

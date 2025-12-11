@@ -1,0 +1,171 @@
+﻿@model GymTest.Application.Services.Users.Query.GetUserDetails.UserDto
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "پروفایل من";
+    Layout = "~/Areas/UserPanel/Views/Shared/_UserPanelLayout.cshtml";
+
+    var days = (DateTime.Now - Model.RegisterTime).Days;
+    string accountAge;
+    if (days < 30)
+        accountAge = $"{days} روز";
+    else if (days < 365)
+        accountAge = $"{days / 30} ماه";
+    else
+        accountAge = $"{days / 365} سال و {(days % 365) / 30} ماه";
+}
+
+<div class="row">
+    <!-- کارت پروفایل -->
+    <div class="col-lg-4 mb-4">
+        <div class="card text-center">
+            <div class="card-body py-5">
+                <div class="avatar-lg mx-auto mb-4">
+                    <i class="bi bi-person-circle display-1 text-primary"></i>
+                </div>
+                <h4 class="mb-1">@Model.FirstName @Model.LastName</h4>
+                <p class="text-muted mb-3">@Model.Email</p>
+
+                @if (Model.Roles != null && Model.Roles.Any())
+                {
+                    <div class="mb-3">
+                        @foreach (var role in Model.Roles)
+                        {
+                            <span class="badge bg-primary me-1">@role</span>
+                        }
+                    </div>
+                }
+
+                <span class="badge @(Model.IsActive ? "bg-success" : "bg-secondary") px-3 py-2">
+                    <i class="bi @(Model.IsActive ? "bi-check-circle" : "bi-x-circle") me-1"></i>
+                    @(Model.IsActive ? "فعال" : "غیرفعال")
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- اطلاعات حساب -->
+    <div class="col-lg-8 mb-4">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>اطلاعات حساب کاربری
+                </h5>
+                <a href="@Url.Action("Edit", "Dashboard", new { area = "UserPanel" })" class="btn btn-primary btn-sm">
+                    <i class="bi bi-pencil me-1"></i>ویرایش
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted small">نام</label>
+                            <p class="mb-0 fw-bold">@Model.FirstName</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted small">نام خانوادگی</label>
+                            <p class="mb-0 fw-bold">@Model.LastName</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted small">ایمیل</label>
+                            <p class="mb-0 fw-bold" dir="ltr">@Model.Email</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted small">تاریخ عضویت</label>
+                            <p class="mb-0 fw-bold">@Model.RegisterTime.ToString("yyyy/MM/dd")</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted small">سن اکانت</label>
+                            <p class="mb-0 fw-bold">@accountAge</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="text-muted small">وضعیت</label>
+                            <p class="mb-0 fw-bold text-@(Model.IsActive ? "success" : "secondary")">
+                                @(Model.IsActive ? "فعال" : "غیرفعال")
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- تغییر رمز عبور -->
+        <div class="card mt-4">
+            <div class="card-body d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="mb-1">
+                        <i class="bi bi-key me-2"></i>رمز عبور
+                    </h6>
+                    <p class="text-muted small mb-0">برای امنیت بیشتر رمز خود را تغییر دهید</p>
+                </div>
+                <a href="@Url.Action("ChangePassword", "Dashboard", new { area = "UserPanel" })" class="btn btn-outline-primary btn-sm">
+                    تغییر رمز عبور
+                </a>
+            </div>
+        </div>
+
+        <!-- حذف حساب -->
+        <div class="danger-zone mt-4">
+            <h6>
+                <i class="bi bi-exclamation-triangle me-2"></i>منطقه خطر
+            </h6>
+            <p>با حذف حساب، تمام اطلاعات شما به صورت دائمی پاک خواهد شد.</p>
+            <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete()">
+                <i class="bi bi-trash me-1"></i>حذف حساب کاربری
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    .info-item {
+        padding: 15px;
+        background: var(--light, #f8fafc);
+        border-radius: 10px;
+    }
+
+        .info-item label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+    .avatar-lg {
+        width: 120px;
+        height: 120px;
+    }
+</style>
+
+<script>
+    function confirmDelete() {
+        if (confirm('آیا از حذف حساب کاربری خود مطمئن هستید؟\nاین عملیات قابل بازگشت نیست!')) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/UserPanel/Dashboard/Delete', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        var response = JSON.parse(xhr.responseText);
+                        alert(response.message);
+                        if (response.isSuccess) {
+                            window.location.href = '/';
+                        }
+                    } else {
+                        alert('خطا در برقراری ارتباط');
+                    }
+                }
+            };
+
+            xhr.send();
+        }
+    }
+</script>
