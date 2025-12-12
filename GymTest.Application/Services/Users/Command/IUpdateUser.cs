@@ -117,7 +117,10 @@ namespace GymTest.Application.Services.Users.Command
             user.UpdateTime = DateTime.Now;
             user.FirstName = request.FirstName;
             user.LastName = request.LastName;
-            user.IsActive = request.IsActive;
+            if (request.IsActive.HasValue)
+            {
+                user.IsActive = request.IsActive.Value;
+            }
 
 
             user.Email = request.Email;
@@ -142,7 +145,7 @@ namespace GymTest.Application.Services.Users.Command
         public string LastName { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
     }
 }

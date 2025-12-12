@@ -12,6 +12,7 @@ using GymTest.Domain.Entities.CourseNmore;
 
 namespace GymTest.Persistence.Data
 {
+
     public class DataBaseContext : DbContext, IDataBaseContext
     {
         public DataBaseContext(DbContextOptions options) : base(options)
@@ -105,6 +106,18 @@ namespace GymTest.Persistence.Data
 
             private void SeedData(ModelBuilder modelBuilder)
             {
+            /*
+            modelBuilder.Entity<User>().HasData(new User()
+            {
+                FirstName = "Reza",
+                LastName = "Naeem",
+                Email = "reza.naim1380@gmail.com",
+                IsActive = true,
+                RegisterTime = DateTime.Now,
+                Password = hashedPassword
+
+            });
+            */
                 modelBuilder.Entity<Role>().HasData(new Role { Id = 1, Name = nameof(UserRoles.Admin) });
                 modelBuilder.Entity<Role>().HasData(new Role { Id = 2, Name = nameof(UserRoles.Coach) });
                 modelBuilder.Entity<Role>().HasData(new Role { Id = 3, Name = nameof(UserRoles.Customer) });

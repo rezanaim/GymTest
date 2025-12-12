@@ -1,5 +1,6 @@
 ﻿using GymTest.Application.Services.Sports.Query;
 using GymTest.Application.Services.Users.Command;
+using GymTest.Application.Services.Users.Query.GetDataForUpdateUser;
 using GymTest.Application.Services.Users.Query.GetUserDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,16 +21,22 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         private readonly IAddNewCourse _addNewCourse;
         private readonly IGetSports _getSports;
         private readonly IGetUserDetails _getUserDetails;
+        private readonly IUpdateUser _updateUser;
+        private readonly IGetDataForUpdateUser _getDataForUpdateUser;
 
         public DashboardController(
             IAddNewCourse addNewCourse,
             IGetSports getSports,
-            IGetUserDetails getUserDetails
+            IGetUserDetails getUserDetails,
+            IUpdateUser updateUser,
+            IGetDataForUpdateUser getDataForUpdateUser
             )
         {
             _addNewCourse = addNewCourse;
             _getSports = getSports;
             _getUserDetails = getUserDetails;
+            _updateUser = updateUser;
+            _getDataForUpdateUser = getDataForUpdateUser;
         }
 
 
@@ -44,11 +51,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             return View(details.Data);
         }
 
-        // GET: DashboardController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
+
 
         // GET: DashboardController/Create
         [HttpGet]
@@ -80,24 +83,24 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         }
 
         // GET: DashboardController/Edit/5
-        public ActionResult Edit(int id)
+        [HttpGet]
+        public ActionResult Edit()
         {
-            return View();
+            var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var result = _getDataForUpdateUser.Execute(userId);
+            var data = result.Data;
+            return View(data);
         }
 
         // POST: DashboardController/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        //[ValidateAntiForgeryToken]
+        public ActionResult Edit(RequestUpdateDto request)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            request.Id = userId;
+            var result = _updateUser.Execute(request);
+            return Json(result);
         }
 
         // GET: DashboardController/Delete/5
