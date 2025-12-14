@@ -23,13 +23,15 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         private readonly IGetUserDetails _getUserDetails;
         private readonly IUpdateUser _updateUser;
         private readonly IGetDataForUpdateUser _getDataForUpdateUser;
+        private readonly IEditPasswordByUser _editPasswordByUser;
 
         public DashboardController(
             IAddNewCourse addNewCourse,
             IGetSports getSports,
             IGetUserDetails getUserDetails,
             IUpdateUser updateUser,
-            IGetDataForUpdateUser getDataForUpdateUser
+            IGetDataForUpdateUser getDataForUpdateUser,
+            IEditPasswordByUser editPasswordByUser
             )
         {
             _addNewCourse = addNewCourse;
@@ -37,6 +39,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             _getUserDetails = getUserDetails;
             _updateUser = updateUser;
             _getDataForUpdateUser = getDataForUpdateUser;
+            _editPasswordByUser = editPasswordByUser;
         }
 
 
@@ -103,6 +106,25 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             return Json(result);
         }
 
+        [HttpPost]
+        public ActionResult ChangePassword(RequestChangePassword request)
+        {
+            var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            request.Id = userId;
+            var result = _editPasswordByUser.Execute(request);
+
+            
+            TempData["Message"] = result.Message;    
+            TempData["Success"] = result.IsSuccess;
+            // اینجا چون بلافاصله بعد انجام عملیات ریدایرکت داریم 
+            // و بین ریدایرکت و برگردوندن دیتا مثل روال قبل یکی رو باید انتخاب کنیم
+            // از تمپ دیتا استفاده میکنیم تا دیتا رو برگردونیم
+
+            return RedirectToAction("Index");
+            
+        }
+
+        
         // GET: DashboardController/Delete/5
         public ActionResult Delete(int id)
         {

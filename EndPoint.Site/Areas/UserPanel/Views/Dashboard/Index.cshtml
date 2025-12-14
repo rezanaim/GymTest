@@ -1,5 +1,4 @@
 ﻿@model GymTest.Application.Services.Users.Query.GetUserDetails.UserDto
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     ViewData["Title"] = "پروفایل من";
     Layout = "~/Areas/UserPanel/Views/Shared/_UserPanelLayout.cshtml";
@@ -13,6 +12,34 @@
     else
         accountAge = $"{days / 365} سال و {(days % 365) / 30} ماه";
 }
+
+<!-- پیام نتیجه عملیات -->
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-@(TempData["Success"] is true ? "success" : "danger") alert-dismissible fade show mb-4">
+        <i class="bi bi-@(TempData["Success"] is true ? "check-circle" : "x-circle") me-2"></i>
+        @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<!-- دکمه‌های پنل -->
+<div class="row mb-4">
+    <div class="col-md-6 mb-3">
+        <a href="@Url.Action("Index", "MyCourses", new { area = "UserPanel" })" class="btn btn-primary btn-lg w-100 py-4">
+            <i class="bi bi-book display-6 d-block mb-2"></i>
+            <span class="fs-5">پنل مشتری</span>
+            <small class="d-block text-light mt-1">دوره‌هایی که خریداری کردم</small>
+        </a>
+    </div>
+    <div class="col-md-6 mb-3">
+        <a href="@Url.Action("Index", "MyTeaching", new { area = "UserPanel" })" class="btn btn-success btn-lg w-100 py-4">
+            <i class="bi bi-mortarboard display-6 d-block mb-2"></i>
+            <span class="fs-5">پنل مربی</span>
+            <small class="d-block text-light mt-1">دوره‌هایی که تدریس می‌کنم</small>
+        </a>
+    </div>
+</div>
 
 <div class="row">
     <!-- کارت پروفایل -->
@@ -107,9 +134,9 @@
                     </h6>
                     <p class="text-muted small mb-0">برای امنیت بیشتر رمز خود را تغییر دهید</p>
                 </div>
-                <a href="@Url.Action("ChangePassword", "Dashboard", new { area = "UserPanel" })" class="btn btn-outline-primary btn-sm">
+                <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
                     تغییر رمز عبور
-                </a>
+                </button>
             </div>
         </div>
 
@@ -122,6 +149,40 @@
             <button type="button" class="btn btn-outline-danger btn-sm" onclick="confirmDelete()">
                 <i class="bi bi-trash me-1"></i>حذف حساب کاربری
             </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal تغییر رمز -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="changePasswordModalLabel">
+                    <i class="bi bi-key me-2"></i>تغییر رمز عبور
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="@Url.Action("ChangePassword", "Dashboard", new { area = "UserPanel" })" method="post">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">رمز فعلی</label>
+                        <input type="password" name="ExPassword" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">رمز جدید</label>
+                        <input type="password" name="NewPassword" class="form-control" required minlength="5">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">تکرار رمز جدید</label>
+                        <input type="password" name="ReNewPassword" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-primary">ذخیره</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -143,6 +204,7 @@
         height: 120px;
     }
 </style>
+
 
 <script>
     function confirmDelete() {
