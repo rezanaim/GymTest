@@ -87,6 +87,7 @@ namespace EndPoint.Site
             services.AddScoped<IGetUserDetails, GetUserDetails>();
             services.AddScoped<IEditPasswordByUser, EditPasswordByUser>();
             services.AddScoped<IGetMyLearningCources, GetMyLearningCources>();
+            services.AddScoped<IGetMyTeachingCourses, GetMyTeachingCourses>();
             
 
         }
