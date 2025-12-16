@@ -1,0 +1,167 @@
+﻿@model Common.ResultDto<GymTest.Application.Services.Courses.Query.ResultGetMyLearningCourses>
+@{
+    ViewData["Title"] = "دوره‌های من";
+    Layout = "~/Areas/UserPanel/Views/Shared/_UserPanelLayout.cshtml";
+}
+
+<!-- هدر صفحه -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">
+            <i class="bi bi-book me-2"></i>دوره‌های من
+        </h4>
+        <p class="text-muted mb-0">دوره‌هایی که در آن‌ها ثبت‌نام کرده‌اید</p>
+    </div>
+    <a href="@Url.Action("Index", "Dashboard", new { area = "UserPanel" })" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right me-1"></i>بازگشت به پنل
+    </a>
+</div>
+
+<!-- فرم جستجو -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="SearchKey" class="form-control"
+                           placeholder="جستجو در عنوان، توضیحات، ورزش یا مربی..."
+                           value="@Context.Request.Query["SearchKey"]">
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select name="IsActive" class="form-select">
+                    <option value="">همه دوره‌ها</option>
+                    <option value="true" selected="@(Context.Request.Query["IsActive"] == "true")">فعال</option>
+                    <option value="false" selected="@(Context.Request.Query["IsActive"] == "false")">غیرفعال</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="bi bi-filter me-1"></i>فیلتر
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- صفحه‌بندی -->
+@{
+    int currentPage = 1;
+    int.TryParse(Context.Request.Query["PageNumber"], out currentPage);
+    if (currentPage < 1) currentPage = 1;
+
+    int totalPages = (int)Math.Ceiling(Model.Data.TotalRow / 5.0);
+}
+
+<!-- لیست دوره‌ها -->
+@if (Model.IsSuccess && Model.Data.MyLearningCourses != null && Model.Data.MyLearningCourses.Any())
+{
+    <div class="row">
+        @foreach (var course in Model.Data.MyLearningCourses)
+        {
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h5 class="card-title mb-1">@course.Title</h5>
+                                <span class="badge bg-info">@course.SportName</span>
+                                <span class="badge @(course.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(course.IsActive ? "فعال" : "غیرفعال")
+                                </span>
+                            </div>
+                            <span class="text-primary fw-bold">@course.Price.ToString("N0") تومان</span>
+                        </div>
+
+                        <p class="card-text text-muted small mb-3">
+                            @(course.Description?.Length > 100 ? course.Description.Substring(0, 100) + "..." : course.Description)
+                        </p>
+
+                        <div class="row text-center mb-3">
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <i class="bi bi-person text-primary"></i>
+                                    <small class="d-block text-muted">مربی</small>
+                                    <small class="fw-bold">@course.CoachName</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <i class="bi bi-clock text-primary"></i>
+                                    <small class="d-block text-muted">مدت</small>
+                                    <small class="fw-bold">@course.DurationInMins دقیقه</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <i class="bi bi-play-circle text-primary"></i>
+                                    <small class="d-block text-muted">جلسات</small>
+                                    <small class="fw-bold">@course.LectureCount</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <a href="@Url.Action("Details", "Courses", new { area = "", id = course.Id })"
+                               class="btn btn-outline-primary btn-sm flex-grow-1">
+                                <i class="bi bi-info-circle me-1"></i>جزئیات
+                            </a>
+                            <a href="@Url.Action("Watch", "Courses", new { area = "", id = course.Id })"
+                               class="btn btn-primary btn-sm flex-grow-1">
+                                <i class="bi bi-play-fill me-1"></i>ورود به دوره
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+
+    @if (totalPages > 1)
+    {
+        <nav class="mt-4">
+            <ul class="pagination justify-content-center">
+                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                    <a class="page-link" href="?PageNumber=@(currentPage - 1)&SearchKey=@Context.Request.Query["SearchKey"]&IsActive=@Context.Request.Query["IsActive"]">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+
+                @for (int i = 1; i <= totalPages; i++)
+                {
+                    <li class="page-item @(i == currentPage ? "active" : "")">
+                        <a class="page-link" href="?PageNumber=@i&SearchKey=@Context.Request.Query["SearchKey"]&IsActive=@Context.Request.Query["IsActive"]">@i</a>
+                    </li>
+                }
+
+                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                    <a class="page-link" href="?PageNumber=@(currentPage + 1)&SearchKey=@Context.Request.Query["SearchKey"]&IsActive=@Context.Request.Query["IsActive"]">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+
+    <p class="text-center text-muted mt-3">
+        نمایش @Model.Data.MyLearningCourses.Count از @Model.Data.TotalRow دوره
+    </p>
+}
+else
+{
+    <!-- حالت خالی -->
+    <div class="card">
+        <div class="card-body text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h5 class="mt-3">هنوز در دوره‌ای ثبت‌نام نکرده‌اید</h5>
+            <p class="text-muted">برای مشاهده دوره‌های موجود به صفحه اصلی مراجعه کنید</p>
+            <a href="/" class="btn btn-primary">
+                <i class="bi bi-search me-1"></i>مشاهده دوره‌ها
+            </a>
+        </div>
+    </div>
+}

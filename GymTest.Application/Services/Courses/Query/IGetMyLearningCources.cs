@@ -132,7 +132,7 @@ namespace GymTest.Application.Services.Courses.Query
     {
         public long Id { get; set; }
         public string SearchKey { get; set; }
-        public int PageNumber { get; set; }
+        public int PageNumber { get; set; } = 1;
         public bool? IsActive { get; set; }
     }
 }

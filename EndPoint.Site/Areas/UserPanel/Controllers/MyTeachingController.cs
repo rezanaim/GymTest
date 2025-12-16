@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace EndPoint.Site.Areas.UserPanel.Controllers
 {
+    [Area("UserPanel")]
     public class MyTeachingController : Controller
     {
         public IActionResult Index()
