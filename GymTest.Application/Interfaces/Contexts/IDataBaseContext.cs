@@ -22,6 +22,7 @@ namespace GymTest.Application.Interfaces.Contexts
         public DbSet<Sport> Sports { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserInCourse> UserInCourses { get; set; }
+        public DbSet<Lecture> Lectures { get; set; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
