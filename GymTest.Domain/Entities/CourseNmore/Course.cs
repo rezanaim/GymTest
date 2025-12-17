@@ -36,8 +36,9 @@ namespace GymTest.Domain.Entities.CourseNmore
         //ما یعنی "دوره" با واسطه به کتگوری مرتبط هستیم 
         // یعنی از طریق اسپورت پس نیازی به رابطه مستقیم با کتگوری نیست. در واقع توصیه نمیشه
 
+        public ICollection<Lecture> Lectures { get; set; }
 
-        
+
     }
 
 
@@ -84,6 +85,17 @@ namespace GymTest.Domain.Entities.CourseNmore
         public virtual User User { get; set; }
         public long UserId { get; set; }
 
+    }
+
+    public class Lecture : BaseEntity
+    {
+        public string Title { get; set; }
+        public string Content { get; set; }
+        public int OrderCount { get; set; }
+        public string Description { get; set; }
+
+        public virtual Course Course { get; set; }
+        public long CourseId { get; set; }
     }
 }
 
