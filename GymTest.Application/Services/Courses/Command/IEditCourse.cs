@@ -9,21 +9,21 @@ using System.Threading.Tasks;
 
 namespace GymTest.Application.Services.Courses.Command
 {
-    public interface IEditCourseByAdmin
+    public interface IEditCourse
     {
-        ResultDto Execute(RequestEditCourseByAdmin request);
+        ResultDto Execute(RequestEditCourse request);
     }
 
-    public class EditCourseByAdmin : IEditCourseByAdmin
+    public class EditCourse : IEditCourse
     {
         private readonly IDataBaseContext _context;
 
-        public EditCourseByAdmin(IDataBaseContext context)
+        public EditCourse(IDataBaseContext context)
         {
             _context = context;
         }
 
-        public ResultDto Execute(RequestEditCourseByAdmin request)
+        public ResultDto Execute(RequestEditCourse request)
         {
             var target = _context.Courses.FirstOrDefault(c=> c.Id == request.CourseId);
 
@@ -96,7 +96,7 @@ namespace GymTest.Application.Services.Courses.Command
         }
     }
 
-    public class RequestEditCourseByAdmin
+    public class RequestEditCourse
     {
         public long CourseId { get; set; }
         public bool IsActive { get; set; }

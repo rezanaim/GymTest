@@ -10,7 +10,7 @@ namespace GymTest.Application.Services.Courses.Query
 {
     public interface IGetDataForEditCourse
     {
-        ResultDto<CourseDataDto> Execute(RequestDataForEditCourseByAdmin request);
+        ResultDto<CourseDataDto> Execute(RequestDataForEditCourse request);
     }
 
     public class GetDataForEditCourse : IGetDataForEditCourse
@@ -24,7 +24,7 @@ namespace GymTest.Application.Services.Courses.Query
             _context = context;
         }
 
-        public ResultDto<CourseDataDto> Execute(RequestDataForEditCourseByAdmin request)
+        public ResultDto<CourseDataDto> Execute(RequestDataForEditCourse request)
         {
 
             var target = _context.Courses.Find(request.CourseId);
@@ -67,7 +67,7 @@ namespace GymTest.Application.Services.Courses.Query
         }
     }
 
-    public class RequestDataForEditCourseByAdmin
+    public class RequestDataForEditCourse
     {
         public  long CourseId { get; set; }
     }

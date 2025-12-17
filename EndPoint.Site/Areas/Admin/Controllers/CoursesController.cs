@@ -15,14 +15,14 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     public class CoursesController : Controller
     {
         private readonly IGetCourses _getCourses;
-        private readonly IEditCourseByAdmin _editCourseByAdmin;
+        private readonly IEditCourse _editCourseByAdmin;
         private readonly IDeleteCourseByAdmin _deleteCourseByAdmin;
         private readonly IGetDataForEditCourse _getDataForEditCourse;
         private readonly IGetSports _getSports;
 
         public CoursesController(
             IGetCourses getCourses,
-            IEditCourseByAdmin editCourseByAdmin,
+            IEditCourse editCourseByAdmin,
             IDeleteCourseByAdmin deleteCourseByAdmin,
             IGetDataForEditCourse getDataForEditCourse,
             IGetSports getSports
@@ -82,7 +82,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         // GET: CourseController/Edit/5
         public ActionResult Edit(long id)
         {
-            var request = new RequestDataForEditCourseByAdmin()
+            var request = new RequestDataForEditCourse()
             {
                 CourseId = id
             };
@@ -108,7 +108,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         // POST: CourseController/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Edit(RequestEditCourseByAdmin request)
+        public ActionResult Edit(RequestEditCourse request)
         {
             var result = _editCourseByAdmin.Execute(request);
 
