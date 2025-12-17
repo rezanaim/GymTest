@@ -36,6 +36,12 @@ namespace EndPoint.Site.Controllers
             return View(result);
         }
 
+        public IActionResult CourseDetail()
+        {
+            return View();
+        }
+
+
         public IActionResult Privacy()
         {
             return View();

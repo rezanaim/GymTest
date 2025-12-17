@@ -19,7 +19,7 @@ namespace GymTest.Domain.Entities.CourseNmore
         public decimal Price { get; set; } = 0;
         //public int Capacity { get; set; }
         //public DateTime StartDate { get; set; }
-        public int DurationInMins { get; set; } = 0;
+        public int DurationInSecs { get; set; } = 0;
         public int LectureCount { get; set; } = 0;
 
         //relations)
@@ -93,6 +93,7 @@ namespace GymTest.Domain.Entities.CourseNmore
         public string Content { get; set; }
         public int OrderCount { get; set; }
         public string Description { get; set; }
+        public int DurationInSecs { get; set; }
 
         public virtual Course Course { get; set; }
         public long CourseId { get; set; }

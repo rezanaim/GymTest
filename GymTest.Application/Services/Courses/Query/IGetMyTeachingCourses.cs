@@ -79,7 +79,7 @@ namespace GymTest.Application.Services.Courses.Query
                     SportName = p.Sport.Name,
                     Price = p.Price,
                     CoachName = (p.Coach.FirstName + " " + p.Coach.LastName),
-                    DurationInMins = p.DurationInMins,
+                    DurationInMins = p.DurationInSecs,
                     LectureCount = p.LectureCount,
                     IsActive = p.IsActive,
                     Id = p.Id
