@@ -30,6 +30,7 @@ namespace GymTest.Application.Services.Courses.Query
             var target = _Context.Courses
                 .Include(p=> p.Coach)
                 .Include(p=> p.Sport)
+                    .ThenInclude(p=> p.Category)
                 .FirstOrDefault(p=> p.Id == request.CourseId);
 
             if (target == null)
@@ -83,6 +84,21 @@ namespace GymTest.Application.Services.Courses.Query
                 CourseDuration = CourseDuration + i.DurationInSecs;
             }
 
+            var targetCategory = target.Sport.Category;
+            var categoryLine = targetCategory.Name;
+            while (targetCategory.ParentId.HasValue)
+            {                
+                //targetCategory = targetCategory.ParentCategory;
+                //به شکل بالا جواب نمیده چون اینکلود و دن اینکلود ظاهرا فقط یه لایه دسترسی میده
+                // پس برای لوپ بیشتر تو خط پایین مستقیم از دیتابیس میخونیم
+                targetCategory = _Context.Categories.Find(targetCategory.ParentId);
+                // خلاصه اگه یه انکلود بزنی و پشتش هر چند تا دن اینکلود بزنی فقط یه لایه میری عمیق تر
+                // مشکل اینه اینجا از قبل نمیدونیم چند تا دن اینکلود لازمه ممکنه هزار تا شاخه کتگوری باشه
+                // پس بهتره همین توی وایل هندل بشه
+
+                categoryLine = $"{targetCategory.Name}> " + categoryLine;
+
+            }
 
             return new ResultDto<ResultGetCourseDetail>()
             {
@@ -98,6 +114,7 @@ namespace GymTest.Application.Services.Courses.Query
                     SportName = target.Sport.Name,
                     IsActive = target.IsActive,
                     Id = target.Id,
+                    CategoryLine = categoryLine,
 
                     Subscribes = subsCount,
                     LecturesList = lectureListShow,
@@ -105,6 +122,7 @@ namespace GymTest.Application.Services.Courses.Query
 
                     TotalRows = totalRows,
                     DurationInSecs = CourseDuration
+                    
                 },
                 IsSuccess = true,
                 Message = $"جزئیات دوره {target.Title} "
@@ -136,6 +154,8 @@ namespace GymTest.Application.Services.Courses.Query
         public int LectureCount { get; set; }
         public int DurationInSecs { get; set; }
         public long Id { get; set; }
+
+        public string CategoryLine { get; set; }
 
         public List<LectureDto> LecturesList { get; set; }
         public int Subscribes { get; set; }
