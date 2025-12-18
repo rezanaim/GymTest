@@ -3,8 +3,7 @@
 @{
     ViewData["Title"] = "صفحه اصلی";
 
-    // --- محاسبات برای صفحه‌بندی ---
-    int pageSize = 6; // نمایش ۶ دوره در هر صفحه (۳ در هر ردیف)
+    int pageSize = 6;
     int currentPage = 1;
     if (Context.Request.Query.ContainsKey("PageNumber"))
     {
@@ -14,57 +13,107 @@
     int pageCount = (Model != null && Model.TotalRows > 0) ? (int)Math.Ceiling((double)Model.TotalRows / pageSize) : 1;
 }
 
-<!-- بخش هدر اصلی سایت (Hero Section) - بدون تغییر -->
-<header class="text-center bg-dark text-white p-5 mb-4 rounded-3">
+<!-- هدر اصلی -->
+<header class="hero-section text-center text-white py-5 mb-5">
     <div class="container">
-        <h1 class="display-4 fw-bold">به باشگاه ورزشی ما خوش آمدید</h1>
-        <p class="lead col-md-8 mx-auto">
-            بهترین دوره‌های آموزشی را با مربیان حرفه‌ای تجربه کنید.
+        <h1 class="display-4 fw-bold mb-3">به باشگاه ورزشی ما خوش آمدید</h1>
+        <p class="lead col-md-8 mx-auto mb-4">
+            بهترین دوره‌های آموزشی را با مربیان حرفه‌ای تجربه کنید
         </p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-            <a href="#courses" class="btn btn-primary btn-lg px-4 gap-3">مشاهده دوره‌ها</a>
-            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg px-4">ثبت نام کنید</a>
+        <div class="d-flex gap-3 justify-content-center">
+            <a href="#courses" class="btn btn-primary btn-lg px-4">
+                <i class="bi bi-play-circle me-2"></i>مشاهده دوره‌ها
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-outline-light btn-lg px-4">
+                <i class="bi bi-person-plus me-2"></i>ثبت نام
+            </a>
         </div>
     </div>
 </header>
 
-<!-- بخش معرفی ویژگی‌ها (بدون تغییر) -->
-<div class="container px-4 py-5" id="featured-3">
-    <!-- ... محتوای این بخش مثل قبل ... -->
+<!-- ویژگی‌ها -->
+<div class="container mb-5">
+    <div class="row g-4 text-center">
+        <div class="col-md-4">
+            <div class="feature-card p-4">
+                <i class="bi bi-trophy display-4 text-primary mb-3"></i>
+                <h5>مربیان حرفه‌ای</h5>
+                <p class="text-muted">آموزش توسط بهترین مربیان کشور</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card p-4">
+                <i class="bi bi-camera-video display-4 text-primary mb-3"></i>
+                <h5>ویدیوهای با کیفیت</h5>
+                <p class="text-muted">دسترسی نامحدود به محتوای آموزشی</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-card p-4">
+                <i class="bi bi-clock-history display-4 text-primary mb-3"></i>
+                <h5>دسترسی همیشگی</h5>
+                <p class="text-muted">هر زمان و هر مکان آموزش ببینید</p>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- بخش دوره‌ها -->
+<div class="container mb-5" id="courses">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold">دوره‌های آموزشی</h2>
+        <p class="text-muted">جدیدترین دوره‌های ورزشی ما را مشاهده کنید</p>
+    </div>
 
-<!-- =================== بخش دوره‌ها (ارتقا یافته) =================== -->
-<div class="container" id="courses">
-    <h2 class="pb-2 border-bottom text-center">آخرین دوره‌ها</h2>
-
-    <!-- فرم جستجو -->
-    <div class="row justify-content-center my-4">
+    <!-- جستجو -->
+    <div class="row justify-content-center mb-4">
         <div class="col-md-8 col-lg-6">
-            <form method="get" class="input-group">
-                <input type="text" name="searchKey" class="form-control form-control-lg" placeholder="جستجوی دوره، مربی یا نوع ورزش..." value="@searchKey">
-                <button class="btn btn-primary" type="submit">بگرد</button>
+            <form method="get" class="input-group shadow-sm">
+                <span class="input-group-text bg-white border-end-0">
+                    <i class="bi bi-search text-muted"></i>
+                </span>
+                <input type="text" name="searchKey" class="form-control border-start-0 py-2"
+                       placeholder="جستجوی دوره، مربی یا ورزش..." value="@searchKey">
+                <button class="btn btn-primary px-4" type="submit">جستجو</button>
             </form>
         </div>
     </div>
 
     @if (Model != null && Model.CourseList.Any())
     {
-        <!-- نمایش دوره‌ها به صورت کارت -->
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             @foreach (var course in Model.CourseList)
             {
                 <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@course.Title</h5>
-                            <p class="card-text text-muted flex-grow-1">@course.Description.Substring(0, Math.Min(course.Description.Length, 100))... </p>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="badge bg-info text-dark">@course.SportName</span>
-                                <span class="fw-bold">@course.Price.ToString("n0") تومان</span>
+                    <div class="card h-100 course-card">
+                        <div class="card-body d-flex flex-column p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge bg-primary bg-opacity-10 text-primary">@course.SportName</span>
+                                <span class="badge @(course.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(course.IsActive ? "فعال" : "غیرفعال")
+                                </span>
                             </div>
-                            <small class="text-muted">مربی: @course.CoachName</small>
-                            <a href="#" class="btn btn-outline-primary mt-3 stretched-link">مشاهده جزئیات</a>
+
+                            <h5 class="card-title fw-bold mb-2">@course.Title</h5>
+                            <p class="card-text text-muted small flex-grow-1">
+                                @(course.Description.Length > 80 ? course.Description.Substring(0, 80) + "..." : course.Description)
+                            </p>
+
+                            <div class="d-flex align-items-center mb-3">
+                                <i class="bi bi-person-circle text-primary me-2"></i>
+                                <small class="text-muted">@course.CoachName</small>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                                <span class="h5 text-primary mb-0">
+                                    @course.Price.ToString("N0")
+                                    <small class="text-muted fw-normal">تومان</small>
+                                </span>
+                                <a href="@Url.Action("CourseDetail", "Home", new { CourseId = course.Id })"
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="bi bi-arrow-left me-1"></i>جزئیات
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -76,21 +125,65 @@
         {
             <nav class="d-flex justify-content-center mt-5">
                 <ul class="pagination">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" href="?PageNumber=@(currentPage - 1)&searchKey=@searchKey">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
                     @for (int i = 1; i <= pageCount; i++)
                     {
                         <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" asp-action="Index" asp-route-PageNumber="@i" asp-route-searchKey="@searchKey">@i</a>
+                            <a class="page-link" href="?PageNumber=@i&searchKey=@searchKey">@i</a>
                         </li>
                     }
+                    <li class="page-item @(currentPage >= pageCount ? "disabled" : "")">
+                        <a class="page-link" href="?PageNumber=@(currentPage + 1)&searchKey=@searchKey">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         }
+
+        <p class="text-center text-muted mt-3">
+            نمایش @Model.CourseList.Count از @Model.TotalRows دوره
+        </p>
     }
     else
     {
-        <div class="alert alert-warning text-center mt-4">
-            هیچ دوره‌ای مطابق با جستجوی شما یافت نشد.
+        <div class="text-center py-5">
+            <i class="bi bi-inbox display-1 text-muted"></i>
+            <h5 class="mt-3">دوره‌ای یافت نشد</h5>
+            <p class="text-muted">جستجوی دیگری امتحان کنید</p>
         </div>
     }
 </div>
-<!-- ==================================================================== -->
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        border-radius: 0 0 2rem 2rem;
+    }
+
+    .feature-card {
+        background: #f8f9fa;
+        border-radius: 1rem;
+        transition: transform 0.3s ease;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .course-card {
+        border-radius: 1rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid #e0e0e0;
+        background: #fff;
+    }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1) !important;
+        }
+</style>

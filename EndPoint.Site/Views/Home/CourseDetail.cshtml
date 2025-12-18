@@ -1,0 +1,191 @@
+﻿@model Common.ResultDto<GymTest.Application.Services.Courses.Query.ResultGetCourseDetail>
+@{
+    ViewData["Title"] = Model.Data?.Title ?? "جزئیات دوره";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    int currentPage = 1;
+    int.TryParse(Context.Request.Query["PageNumber"], out currentPage);
+    if (currentPage < 1) currentPage = 1;
+    int totalPages = (int)Math.Ceiling((Model.Data?.TotalRows ?? 0) / 10.0);
+}
+
+@if (!Model.IsSuccess)
+{
+    <div class="container py-5">
+        <div class="alert alert-danger text-center">
+            <i class="bi bi-x-circle display-4 d-block mb-3"></i>
+            <h5>@Model.Message</h5>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">
+                بازگشت به لیست دوره‌ها
+            </a>
+        </div>
+    </div>
+}
+else
+{
+    <div class="container py-4">
+        <!-- بردکرامب -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/">خانه</a></li>
+                <li class="breadcrumb-item"><a href="@Url.Action("Index", "Home")">دوره‌ها</a></li>
+                <li class="breadcrumb-item active">@Model.Data.Title</li>
+            </ol>
+        </nav>
+
+        <div class="row">
+            <!-- ستون اصلی -->
+            <div class="col-lg-8">
+                <!-- هدر دوره -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h2 class="mb-2">@Model.Data.Title</h2>
+                                <div class="text-muted small mb-2">
+                                    <i class="bi bi-folder me-1"></i>@Model.Data.CategoryLine
+                                </div>
+                                <span class="badge bg-info me-2">@Model.Data.SportName</span>
+                                <span class="badge @(Model.Data.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(Model.Data.IsActive ? "فعال" : "غیرفعال")
+                                </span>
+                            </div>
+                        </div>
+
+                        <p class="lead">@Model.Data.Description</p>
+                    </div>
+                </div>
+
+                <!-- لیست جلسات -->
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ol me-2"></i>جلسات دوره
+                        </h5>
+                        <span class="badge bg-primary">@Model.Data.LectureCount جلسه</span>
+                    </div>
+                    <div class="card-body">
+                        <!-- جستجو در جلسات -->
+                        <form method="get" class="mb-4">
+                            <input type="hidden" name="CourseId" value="@Model.Data.Id" />
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                <input type="text" name="SearchKey" class="form-control"
+                                       placeholder="جستجو در جلسات..."
+                                       value="@Context.Request.Query["SearchKey"]">
+                                <button type="submit" class="btn btn-primary">جستجو</button>
+                            </div>
+                        </form>
+
+                        @if (Model.Data.LecturesList != null && Model.Data.LecturesList.Any())
+                        {
+                            <div class="list-group">
+                                @foreach (var lecture in Model.Data.LecturesList)
+                                {
+                                    <div class="list-group-item list-group-item-action">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <span class="badge bg-secondary me-2">@lecture.OrderCount</span>
+                                                <strong>@lecture.Title</strong>
+                                                @if (!string.IsNullOrEmpty(lecture.Description))
+                                                {
+                                                    <p class="text-muted small mb-0 mt-1">@lecture.Description</p>
+                                                }
+                                            </div>
+                                            <a href="@Url.Action("Watch", "Home", new { id = Model.Data.Id, lectureOrder = lecture.OrderCount })"
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-play-fill"></i> مشاهده
+                                            </a>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+
+                            @if (totalPages > 1)
+                            {
+                                <nav class="mt-4">
+                                    <ul class="pagination justify-content-center mb-0">
+                                        <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                            <a class="page-link" href="?CourseId=@Model.Data.Id&PageNumber=@(currentPage - 1)&SearchKey=@Context.Request.Query["SearchKey"]">
+                                                <i class="bi bi-chevron-right"></i>
+                                            </a>
+                                        </li>
+                                        @for (int i = 1; i <= totalPages; i++)
+                                        {
+                                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                                <a class="page-link" href="?CourseId=@Model.Data.Id&PageNumber=@i&SearchKey=@Context.Request.Query["SearchKey"]">@i</a>
+                                            </li>
+                                        }
+                                        <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                            <a class="page-link" href="?CourseId=@Model.Data.Id&PageNumber=@(currentPage + 1)&SearchKey=@Context.Request.Query["SearchKey"]">
+                                                <i class="bi bi-chevron-left"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-center py-4 text-muted">
+                                <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                                <p>هنوز جلسه‌ای برای این دوره ثبت نشده</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- ستون کناری -->
+            <div class="col-lg-4">
+                <!-- کارت خرید -->
+                <div class="card mb-4 sticky-top" style="top: 20px;">
+                    <div class="card-body text-center">
+                        <h3 class="text-primary mb-4">
+                            @Model.Data.Price.ToString("N0")
+                            <small class="text-muted">تومان</small>
+                        </h3>
+
+                        <div class="row text-center mb-4">
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <i class="bi bi-people text-primary d-block mb-1"></i>
+                                    <small class="text-muted d-block">شرکت‌کننده</small>
+                                    <strong>@Model.Data.Subscribes</strong>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <i class="bi bi-play-circle text-primary d-block mb-1"></i>
+                                    <small class="text-muted d-block">جلسات</small>
+                                    <strong>@Model.Data.LectureCount</strong>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="border rounded p-2">
+                                    <i class="bi bi-clock text-primary d-block mb-1"></i>
+                                    <small class="text-muted d-block">مدت</small>
+                                    <strong>@(Model.Data.DurationInSecs / 60) دقیقه</strong>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="#" class="btn btn-primary btn-lg w-100 mb-2">
+                            <i class="bi bi-cart-plus me-2"></i>ثبت‌نام در دوره
+                        </a>
+                        <small class="text-muted">دسترسی نامحدود به محتوای دوره</small>
+                    </div>
+                </div>
+
+                <!-- اطلاعات مدرس -->
+                <div class="card">
+                    <div class="card-body text-center">
+                        <i class="bi bi-person-circle display-4 text-primary mb-3"></i>
+                        <h5>@Model.Data.CouchName</h5>
+                        <p class="text-muted small">مدرس دوره</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

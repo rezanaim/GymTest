@@ -14,12 +14,17 @@ namespace EndPoint.Site.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IGetCourses _getCourses;
+        private readonly IGetCourseDetail _getCourseDetail;
 
-
-        public HomeController(ILogger<HomeController> logger, IGetCourses getCourses)
+        public HomeController(
+            ILogger<HomeController> logger,
+            IGetCourses getCourses,
+            IGetCourseDetail getCourseDetail
+            )
         {
             _logger = logger;
             _getCourses = getCourses;
+            _getCourseDetail = getCourseDetail;
         }
 
         public IActionResult Index(string searchKey = "", int pageNumber = 1)
@@ -36,9 +41,11 @@ namespace EndPoint.Site.Controllers
             return View(result);
         }
 
-        public IActionResult CourseDetail()
+        public IActionResult CourseDetail(RequestGetCourseDetail request)
         {
-            return View();
+            var result = _getCourseDetail.Execute(request);
+
+            return View(result);
         }
 
 
