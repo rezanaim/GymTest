@@ -21,6 +21,7 @@ namespace GymTest.Domain.Entities.CourseNmore
         //public DateTime StartDate { get; set; }
         public int DurationInSecs { get; set; } = 0;
         public int LectureCount { get; set; } = 0;
+        public string Thumbnail { get; set; } = "";
 
         //relations)
 
