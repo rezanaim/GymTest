@@ -91,10 +91,10 @@ namespace GymTest.Domain.Entities.CourseNmore
     public class Lecture : BaseEntity
     {
         public string Title { get; set; }
-        public string Content { get; set; }
+        public string ContentPath { get; set; }
         public int OrderCount { get; set; }
         public string Description { get; set; }
-        public int DurationInSecs { get; set; }
+        public int DurationInSecs { get; set; } = 0;
 
         public virtual Course Course { get; set; }
         public long CourseId { get; set; }

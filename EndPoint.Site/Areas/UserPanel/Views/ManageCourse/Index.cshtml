@@ -1,0 +1,264 @@
+﻿@model Common.ResultDto<GymTest.Application.Services.Courses.Query.ResultGetCourseDetail>
+@{
+    ViewData["Title"] = "مدیریت دوره";
+    Layout = "~/Areas/UserPanel/Views/Shared/_UserPanelLayout.cshtml";
+
+    int currentPage = 1;
+    int.TryParse(Context.Request.Query["PageNumber"], out currentPage);
+    if (currentPage < 1) currentPage = 1;
+    int totalPages = (int)Math.Ceiling((Model.Data?.TotalRows ?? 0) / 10.0);
+}
+
+<!-- هدر صفحه -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">
+            <i class="bi bi-gear me-2"></i>مدیریت دوره
+        </h4>
+        <p class="text-muted mb-0">@Model.Data?.Title</p>
+    </div>
+    <a href="@Url.Action("Index", "MyTeaching", new { area = "UserPanel" })" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right me-1"></i>بازگشت به لیست
+    </a>
+</div>
+
+@if (!Model.IsSuccess)
+{
+    <div class="alert alert-danger">
+        <i class="bi bi-x-circle me-2"></i>@Model.Message
+    </div>
+}
+else
+{
+    <!-- اطلاعات دوره -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <h5 class="fw-bold">@Model.Data.Title</h5>
+                    <p class="text-muted small mb-2">
+                        <i class="bi bi-folder me-1"></i>@Model.Data.CategoryLine
+                    </p>
+                    <span class="badge bg-info me-2">@Model.Data.SportName</span>
+                    <span class="badge @(Model.Data.IsActive ? "bg-success" : "bg-secondary")">
+                        @(Model.Data.IsActive ? "فعال" : "غیرفعال")
+                    </span>
+                </div>
+                <div class="col-md-4 text-end">
+                    <div class="row text-center">
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <i class="bi bi-people text-primary"></i>
+                                <small class="d-block text-muted">مشترکین</small>
+                                <strong>@Model.Data.Subscribes</strong>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <i class="bi bi-play-circle text-primary"></i>
+                                <small class="d-block text-muted">جلسات</small>
+                                <strong>@Model.Data.LectureCount</strong>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="border rounded p-2">
+                                <i class="bi bi-clock text-primary"></i>
+                                <small class="d-block text-muted">مدت</small>
+                                <strong>@(Model.Data.DurationInSecs / 60) دقیقه</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- مدیریت جلسات -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-list-ol me-2"></i>جلسات دوره
+            </h5>
+            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addLectureModal">
+                <i class="bi bi-plus-lg me-1"></i>افزودن جلسه
+            </button>
+        </div>
+        <div class="card-body">
+            <!-- جستجو -->
+            <form method="get" class="mb-4">
+                <input type="hidden" name="CourseId" value="@Model.Data.Id" />
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" name="SearchKey" class="form-control"
+                           placeholder="جستجو در جلسات..."
+                           value="@Context.Request.Query["SearchKey"]">
+                    <button type="submit" class="btn btn-primary">جستجو</button>
+                </div>
+            </form>
+
+            @if (Model.Data.LecturesList != null && Model.Data.LecturesList.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th width="60">#</th>
+                                <th>عنوان</th>
+                                <th>توضیحات</th>
+                                <th width="150" class="text-center">عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var lecture in Model.Data.LecturesList)
+                            {
+                                <tr>
+                                    <td><span class="badge bg-secondary">@lecture.OrderCount</span></td>
+                                    <td><strong>@lecture.Title</strong></td>
+                                    <td class="text-muted small">
+                                        @(lecture.Description?.Length > 50 ? lecture.Description.Substring(0, 50) + "..." : lecture.Description)
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="#" class="btn btn-outline-warning btn-sm me-1" title="ویرایش">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="#" class="btn btn-outline-danger btn-sm" title="حذف">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- صفحه‌بندی -->
+                @if (totalPages > 1)
+                {
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center mb-0">
+                            <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                                <a class="page-link" href="?CourseId=@Model.Data.Id&PageNumber=@(currentPage - 1)&SearchKey=@Context.Request.Query["SearchKey"]">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                            @for (int i = 1; i <= totalPages; i++)
+                            {
+                                <li class="page-item @(i == currentPage ? "active" : "")">
+                                    <a class="page-link" href="?CourseId=@Model.Data.Id&PageNumber=@i&SearchKey=@Context.Request.Query["SearchKey"]">@i</a>
+                                </li>
+                            }
+                            <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                                <a class="page-link" href="?CourseId=@Model.Data.Id&PageNumber=@(currentPage + 1)&SearchKey=@Context.Request.Query["SearchKey"]">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5 text-muted">
+                    <i class="bi bi-inbox display-4 d-block mb-2"></i>
+                    <p>هنوز جلسه‌ای ثبت نشده</p>
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addLectureModal">
+                        <i class="bi bi-plus-lg me-1"></i>افزودن اولین جلسه
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+<!-- Modal افزودن جلسه -->
+<div class="modal fade" id="addLectureModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-plus-circle me-2"></i>افزودن جلسه جدید
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="addLectureForm">
+                <input type="hidden" name="CourseId" value="@Model.Data?.Id" />
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">عنوان جلسه <span class="text-danger">*</span></label>
+                        <input type="text" name="Title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">توضیحات</label>
+                        <textarea name="Description" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">شماره جلسه</label>
+                        <select name="OrderCount" class="form-select">
+                            <option value="">انتهای لیست (پیش‌فرض)</option>
+                            @if (Model.Data?.LecturesList != null)
+                            {
+                                @for (int i = 1; i <= Model.Data.LectureCount + 1; i++)
+                                {
+                                    <option value="@i">جلسه @i</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">فایل ویدیو <span class="text-danger">*</span></label>
+                        <input type="file" name="VideoFile" class="form-control" accept="video/*" required>
+                        <input type="hidden" name="ContentPath" id="contentPath">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">مدت زمان (ثانیه)</label>
+                        <input type="number" name="DurationInSecs" class="form-control" value="0" min="0">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-plus-lg me-1"></i>افزودن
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- پیام نتیجه -->
+<div id="resultMessage" class="mt-3" style="display: none;"></div>
+
+@section Scripts {
+    <script>
+        document.getElementById('addLectureForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            var formData = new FormData(this);
+
+            fetch('@Url.Action("AddLecture", "ManageCourse", new { area = "UserPanel" })', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var modal = bootstrap.Modal.getInstance(document.getElementById('addLectureModal'));
+                modal.hide();
+
+                var msgDiv = document.getElementById('resultMessage');
+                msgDiv.style.display = 'block';
+
+                if (data.isSuccess) {
+                    msgDiv.className = 'alert alert-success mt-3';
+                    msgDiv.innerHTML = '<i class="bi bi-check-circle me-2"></i>' + data.message;
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    msgDiv.className = 'alert alert-danger mt-3';
+                    msgDiv.innerHTML = '<i class="bi bi-x-circle me-2"></i>' + data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+}

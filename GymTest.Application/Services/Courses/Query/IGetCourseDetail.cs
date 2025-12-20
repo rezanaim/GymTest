@@ -69,7 +69,7 @@ namespace GymTest.Application.Services.Courses.Query
                     Title = p.Title,
                     Description = p.Description,
                     OrderCount = p.OrderCount,
-                    Content = p.Content
+                    Content = p.ContentPath
 
                 })
             

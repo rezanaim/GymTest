@@ -107,7 +107,7 @@
                                class="btn btn-outline-primary btn-sm flex-grow-1">
                                 <i class="bi bi-info-circle me-1"></i>جزئیات
                             </a>
-                            <a href="@Url.Action("Manage", "Courses", new { area = "UserPanel", id = course.Id })"
+                            <a href="@Url.Action("Index", "ManageCourse", new { area = "UserPanel", CourseId = course.Id })"
                                class="btn btn-primary btn-sm flex-grow-1">
                                 <i class="bi bi-gear me-1"></i>مدیریت
                             </a>

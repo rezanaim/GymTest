@@ -25,6 +25,7 @@ using GymTest.Application.Services.Courses.Command;
 using GymTest.Application.Services.Sports.Query;
 using GymTest.Application.Services.Sports.Command;
 using GymTest.Application.Services.Users.Query.GetUserDetails;
+using GymTest.Application.Services.Lectures.Command;
 
 namespace EndPoint.Site
 
@@ -89,6 +90,7 @@ namespace EndPoint.Site
             services.AddScoped<IGetMyLearningCources, GetMyLearningCources>();
             services.AddScoped<IGetMyTeachingCourses, GetMyTeachingCourses>();
             services.AddScoped<IGetCourseDetail, GetCourseDetail>();
+            services.AddScoped<IAddCourseLecture, AddCourseLecture>();
             
 
         }

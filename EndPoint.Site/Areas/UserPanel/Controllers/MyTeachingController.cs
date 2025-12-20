@@ -1,6 +1,7 @@
 ﻿using GymTest.Application.Interfaces.Contexts;
 using GymTest.Application.Services.Courses.Command;
 using GymTest.Application.Services.Courses.Query;
+using GymTest.Application.Services.Lectures.Command;
 using GymTest.Application.Services.Sports.Query;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -107,7 +108,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         }
 
 
+
+
     }
-
-
 }
