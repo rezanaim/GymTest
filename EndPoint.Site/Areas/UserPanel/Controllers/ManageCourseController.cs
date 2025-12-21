@@ -18,18 +18,20 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         private readonly IDataBaseContext _context;
         private readonly IGetCourseDetail _getCourseDetail;
         private readonly IAddCourseLecture _addCourseLecture;
-
+        private readonly IDeleteLecture _deleteLecture;
 
         // متد کمکی
         public ManageCourseController(
             IDataBaseContext context,
             IGetCourseDetail getCourseDetail,
-            IAddCourseLecture addCourseLecture
+            IAddCourseLecture addCourseLecture,
+            IDeleteLecture deleteLecture
             )
         {
             _context = context;
             _getCourseDetail = getCourseDetail;
             _addCourseLecture = addCourseLecture;
+            _deleteLecture = deleteLecture;
         }
 
         private bool IsOwner(long courseId)
@@ -86,6 +88,26 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
 
 
             var result = _addCourseLecture.Execute(request);
+
+            return Json(result);
+        }
+
+
+        [HttpPost]
+        public IActionResult DeleteLecture(long LectureId)
+        {
+            var target = _context.Lectures.Find(LectureId);
+            if (target == null)
+            {
+                return NotFound();
+            }
+
+            if (!IsOwner(target.CourseId))
+            {
+                return NotFound();
+            }
+
+            var result = _deleteLecture.Execute(LectureId);
 
             return Json(result);
         }

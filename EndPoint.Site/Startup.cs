@@ -91,6 +91,7 @@ namespace EndPoint.Site
             services.AddScoped<IGetMyTeachingCourses, GetMyTeachingCourses>();
             services.AddScoped<IGetCourseDetail, GetCourseDetail>();
             services.AddScoped<IAddCourseLecture, AddCourseLecture>();
+            services.AddScoped<IDeleteLecture, DeleteLecture>();
             
 
         }

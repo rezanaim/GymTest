@@ -69,8 +69,9 @@ namespace GymTest.Application.Services.Courses.Query
                     Title = p.Title,
                     Description = p.Description,
                     OrderCount = p.OrderCount,
-                    Content = p.ContentPath
-
+                    Content = p.ContentPath,
+                    Id = p.Id
+                    
                 })
             
                 .Skip((request.PageNumber - 1 )* pageSize)
@@ -137,6 +138,7 @@ namespace GymTest.Application.Services.Courses.Query
 
     public class LectureDto
     {
+        public long Id { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public int OrderCount { get; set; }
