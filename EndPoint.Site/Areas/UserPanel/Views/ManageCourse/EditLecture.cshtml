@@ -1,0 +1,128 @@
+﻿@model Common.ResultDto<GymTest.Application.Services.Lectures.Query.ResultGetDataForEditLecture>
+@{
+    ViewData["Title"] = "ویرایش جلسه";
+    Layout = "~/Areas/UserPanel/Views/Shared/_UserPanelLayout.cshtml";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="mb-1">
+            <i class="bi bi-pencil me-2"></i>ویرایش جلسه
+        </h4>
+        <p class="text-muted mb-0">@Model.Data?.CourseName</p>
+    </div>
+    <a href="@Url.Action("Index", "ManageCourse", new { area = "UserPanel", CourseId = Model.Data?.CourseId })" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-right me-1"></i>بازگشت
+    </a>
+</div>
+
+@if (!Model.IsSuccess)
+{
+    <div class="alert alert-danger">
+        <i class="bi bi-x-circle me-2"></i>@Model.Message
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="card-body p-4">
+            <div id="message-area" class="mb-3" style="display: none;"></div>
+
+            <form id="editLectureForm" enctype="multipart/form-data">
+                <input type="hidden" name="LectureId" value="@Model.Data.LectureId" />
+                <input type="hidden" name="CourseId" value="@Model.Data.CourseId" />
+
+                <div class="mb-3">
+                    <label class="form-label">عنوان جلسه <span class="text-danger">*</span></label>
+                    <input type="text" name="Title" class="form-control" value="@Model.Data.Title" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">توضیحات</label>
+                    <textarea name="Description" class="form-control" rows="3">@Model.Data.Description</textarea>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">شماره جلسه</label>
+                        <input type="number" name="OrderCount" class="form-control" value="@Model.Data.OrderCount" min="1">
+                        <small class="text-muted">خالی بگذارید تا به انتهای لیست برود</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">مدت زمان (ثانیه)</label>
+                        <input type="number" name="DurationInSecs" class="form-control" value="@Model.Data.DurationInSecs" min="0">
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label">فایل ویدیو</label>
+                    <div class="row align-items-center">
+                        <div class="col-md-4 mb-2">
+                            @if (!string.IsNullOrEmpty(Model.Data.ContentPath))
+                            {
+                                <div class="border rounded p-3 text-center">
+                                    <i class="bi bi-file-earmark-play display-6 text-primary"></i>
+                                    <small class="d-block text-muted mt-1">ویدیو فعلی موجود</small>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="border rounded p-3 text-center text-muted">
+                                    <i class="bi bi-file-earmark-x display-6"></i>
+                                    <small class="d-block">بدون ویدیو</small>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-8">
+                            <input type="file" name="VideoFile" class="form-control" accept="video/*">
+                            <small class="text-muted">برای تغییر ویدیو، فایل جدید انتخاب کنید</small>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-1"></i>ذخیره تغییرات
+                    </button>
+                    <a href="@Url.Action("Index", "ManageCourse", new { area = "UserPanel", CourseId = Model.Data.CourseId })" class="btn btn-secondary">
+                        انصراف
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<script>
+    document.getElementById('editLectureForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        var formData = new FormData(this);
+
+        fetch('@Url.Action("EditLecture", "ManageCourse", new { area = "UserPanel" })', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            var msgDiv = document.getElementById('message-area');
+            msgDiv.style.display = 'block';
+
+            if (data.isSuccess) {
+                msgDiv.className = 'alert alert-success';
+                msgDiv.innerHTML = '<i class="bi bi-check-circle me-2"></i>' + data.message;
+                setTimeout(() => {
+                    window.location.href = '@Url.Action("Index", "ManageCourse", new { area = "UserPanel", CourseId = Model.Data.CourseId })';
+                }, 1500);
+            } else {
+                msgDiv.className = 'alert alert-danger';
+                msgDiv.innerHTML = '<i class="bi bi-x-circle me-2"></i>' + data.message;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    });
+</script>

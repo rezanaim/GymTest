@@ -122,7 +122,17 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
                 }
 
                 request.ThumbnailPath = "/uploads/thumbnails/" + fileName;
-            } //claude 
+            }
+            else if (Request.Form["RemoveThumbnail"] == "on")
+            {
+                request.ThumbnailPath = null; // حذف
+            }
+            else
+            {
+                // همون قبلی بمونه
+                request.ThumbnailPath = target.ThumbnailPath;
+            }
+            //claude 
 
             var result = _editCourse.Execute(request);
 

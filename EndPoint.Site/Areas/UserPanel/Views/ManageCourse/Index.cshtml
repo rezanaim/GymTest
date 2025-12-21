@@ -118,7 +118,8 @@ else
                                         @(lecture.Description?.Length > 50 ? lecture.Description.Substring(0, 50) + "..." : lecture.Description)
                                     </td>
                                     <td class="text-center">
-                                        <a href="#" class="btn btn-outline-warning btn-sm me-1" title="ویرایش">
+                                        <a href="@Url.Action("EditLecture", "ManageCourse", new { area = "UserPanel", LectureId = lecture.Id })"
+                                           class="btn btn-outline-warning btn-sm me-1" title="ویرایش">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button" class="btn btn-outline-danger btn-sm btn-delete-lecture"

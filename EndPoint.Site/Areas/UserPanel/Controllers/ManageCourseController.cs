@@ -1,6 +1,7 @@
 ﻿using GymTest.Application.Interfaces.Contexts;
 using GymTest.Application.Services.Courses.Query;
 using GymTest.Application.Services.Lectures.Command;
+using GymTest.Application.Services.Lectures.Query;
 using Microsoft.AspNetCore.Http; // برای اپلود ویدیو
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,6 +21,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         private readonly IAddCourseLecture _addCourseLecture;
         private readonly IDeleteLecture _deleteLecture;
         private readonly IEditLecture _editLecture;
+        private readonly IGetDataForEditLecture _getDataForEditLecture;
 
         // متد کمکی
         public ManageCourseController(
@@ -27,7 +29,8 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             IGetCourseDetail getCourseDetail,
             IAddCourseLecture addCourseLecture,
             IDeleteLecture deleteLecture,
-            IEditLecture editLecture
+            IEditLecture editLecture,
+            IGetDataForEditLecture getDataForEditLecture
             )
         {
             _context = context;
@@ -35,6 +38,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             _addCourseLecture = addCourseLecture;
             _deleteLecture = deleteLecture;
             _editLecture = editLecture;
+            _getDataForEditLecture = getDataForEditLecture;
         }
 
         private bool IsOwner(long courseId)
@@ -115,6 +119,25 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             return Json(result);
         }
 
+        [HttpGet]
+        public IActionResult EditLecture(long LectureId)
+        {
+            var targetLecture = _context.Lectures.Find(LectureId);
+            if (targetLecture == null)
+            {
+                return NotFound();
+            }
+
+            if (!IsOwner(targetLecture.CourseId))
+            {
+                return NotFound();
+            }
+            
+            
+            var result = _getDataForEditLecture.Execute(LectureId);
+            
+            return View(result);
+        }
 
         [HttpPost]
         public IActionResult EditLecture(RequestEditCourseLecture request, IFormFile VideoFile)
@@ -159,7 +182,6 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             var result = _editLecture.Execute(request);
 
             return Json(result);
-
         }
     }
 }
