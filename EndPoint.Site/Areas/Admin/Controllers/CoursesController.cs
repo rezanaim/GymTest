@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -108,8 +109,28 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         // POST: CourseController/Edit/5
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public ActionResult Edit(RequestEditCourse request)
+        public ActionResult Edit(RequestEditCourse request, IFormFile ThumbnailFile)
         {
+
+
+            // آپلود تامبنیل جدید
+            if (ThumbnailFile != null && ThumbnailFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "thumbnails");
+
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ThumbnailFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    ThumbnailFile.CopyTo(stream);
+                }
+
+                request.ThumbnailPath = "/uploads/thumbnails/" + fileName;
+            } //claude 
             var result = _editCourseByAdmin.Execute(request);
 
             return Json(result);

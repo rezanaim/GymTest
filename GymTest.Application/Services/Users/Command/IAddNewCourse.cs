@@ -61,7 +61,8 @@ namespace GymTest.Application.Services.Users.Command
                 Description = request.Description,
                 Price = request.price,
                 CoachId = coachId,
-                SportId = request.SportId
+                SportId = request.SportId,
+                ThumbnailPath = request.ThumbnailPath
             };
 
             //اگه طرف رول کوچ نداشت باید بهش اضافه کنیم
@@ -138,6 +139,7 @@ namespace GymTest.Application.Services.Users.Command
         public decimal price { get; set; }
         public long CoachId { get; set; }
         public long SportId { get; set; }
+        public string? ThumbnailPath { get; set; }
 
 
     }

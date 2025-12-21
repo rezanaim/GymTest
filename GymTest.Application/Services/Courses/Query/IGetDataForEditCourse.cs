@@ -51,8 +51,9 @@ namespace GymTest.Application.Services.Courses.Query
                 Description = target.Description,
                 Price = target.Price,
                 SportId = target.SportId,
-                CourseId = target.Id
-                
+                CourseId = target.Id,
+                ThumbnailPath = target.ThumbnailPath
+
 
             };
 
@@ -81,6 +82,7 @@ namespace GymTest.Application.Services.Courses.Query
         public string Description { get; set; }
         public decimal Price { get; set; }
         public long SportId { get; set; }
+        public string? ThumbnailPath { get; set; }
 
     }
 }

@@ -65,6 +65,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
 
 
             // آپلود فایل
+            //AI Claude
             if (VideoFile != null && VideoFile.Length > 0)
             {
                 var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "lectures");

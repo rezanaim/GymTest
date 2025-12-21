@@ -121,7 +121,9 @@ namespace GymTest.Application.Services.Courses.Query
                     LectureCount = totalLecturesCount,
 
                     TotalRows = totalRows,
-                    DurationInSecs = CourseDuration
+                    DurationInSecs = CourseDuration,
+                    ThumbnailPath = target.ThumbnailPath
+                    
                     
                 },
                 IsSuccess = true,
@@ -154,6 +156,7 @@ namespace GymTest.Application.Services.Courses.Query
         public int LectureCount { get; set; }
         public int DurationInSecs { get; set; }
         public long Id { get; set; }
+        public string? ThumbnailPath { get; set; }
 
         public string CategoryLine { get; set; }
 

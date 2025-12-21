@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -75,10 +76,30 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         [HttpPost]
         [Authorize]
         //[ValidateAntiForgeryToken]
-        public ActionResult CreateCourse(RequestAddNewCourseDto request)
+        public ActionResult CreateCourse(RequestAddNewCourseDto request, IFormFile ThumbnailFile)
         {
 
             long coachId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            // آپلود تامبنیل
+            if (ThumbnailFile != null && ThumbnailFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "thumbnails");
+
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ThumbnailFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    ThumbnailFile.CopyTo(stream);
+                }
+
+                request.ThumbnailPath = "/uploads/thumbnails/" + fileName;
+            }
+            // Claude AI
 
             var addedCourse = _addNewCourse.Execute(request, coachId);
 

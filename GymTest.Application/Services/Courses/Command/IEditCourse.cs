@@ -80,6 +80,7 @@ namespace GymTest.Application.Services.Courses.Command
             target.Description = request.Description;
             target.Price = request.Price;
             target.SportId = request.SportId;
+            target.ThumbnailPath = request.ThumbnailPath;
 
 
             target.UpdateTime = DateTime.Now;
@@ -104,5 +105,6 @@ namespace GymTest.Application.Services.Courses.Command
         public string Description { get; set; }
         public decimal Price { get; set; }
         public long SportId { get; set; }
+        public string? ThumbnailPath { get; set; }
     }
 }

@@ -76,7 +76,8 @@ namespace GymTest.Application.Services.Courses.Query
                     CoachName = (p.Coach.FirstName + " " + p.Coach.LastName),
                     SportName = p.Sport.Name,
                     Id = p.Id,
-                    IsActive = p.IsActive
+                    IsActive = p.IsActive,
+                    ThumbnailPath = p.ThumbnailPath
                     
 
                 }).ToList();
@@ -120,6 +121,7 @@ namespace GymTest.Application.Services.Courses.Query
         public int LectureCount { get; set; }
         public string CoachName { get; set; }
         public string SportName { get; set; }
+        public string ThumbnailPath { get; set; }
 
 
     }

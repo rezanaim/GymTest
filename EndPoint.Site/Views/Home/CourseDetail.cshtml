@@ -36,6 +36,20 @@ else
         <div class="row">
             <!-- ستون اصلی -->
             <div class="col-lg-8">
+                <!-- تامبنیل دوره -->
+                <div class="course-hero mb-4">
+                    @if (!string.IsNullOrEmpty(Model.Data.ThumbnailPath))
+                    {
+                        <img src="@Model.Data.ThumbnailPath" alt="@Model.Data.Title" class="img-fluid rounded">
+                    }
+                    else
+                    {
+                        <div class="no-thumbnail-hero rounded">
+                            <i class="bi bi-play-circle"></i>
+                        </div>
+                    }
+                </div>
+
                 <!-- هدر دوره -->
                 <div class="card mb-4">
                     <div class="card-body">
@@ -189,3 +203,30 @@ else
         </div>
     </div>
 }
+
+<style>
+    .course-hero {
+        overflow: hidden;
+    }
+
+        .course-hero img {
+            width: 100%;
+            height: 350px;
+            object-fit: cover;
+        }
+
+    .no-thumbnail-hero {
+        width: 100%;
+        height: 350px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        color: white;
+    }
+
+        .no-thumbnail-hero i {
+            font-size: 5rem;
+            opacity: 0.5;
+        }
+</style>

@@ -4,10 +4,12 @@ using GymTest.Application.Services.Courses.Query;
 using GymTest.Application.Services.Lectures.Command;
 using GymTest.Application.Services.Sports.Query;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -87,7 +89,7 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(RequestEditCourse request)
+        public IActionResult Edit(RequestEditCourse request, IFormFile ThumbnailFile)
         {
             var userId = long.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             
@@ -101,6 +103,26 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             {
                 return Unauthorized();
             }
+
+
+            // آپلود تامبنیل جدید
+            if (ThumbnailFile != null && ThumbnailFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "thumbnails");
+
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(ThumbnailFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    ThumbnailFile.CopyTo(stream);
+                }
+
+                request.ThumbnailPath = "/uploads/thumbnails/" + fileName;
+            } //claude 
 
             var result = _editCourse.Execute(request);
 
