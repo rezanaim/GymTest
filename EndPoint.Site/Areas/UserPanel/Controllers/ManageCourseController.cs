@@ -19,19 +19,22 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
         private readonly IGetCourseDetail _getCourseDetail;
         private readonly IAddCourseLecture _addCourseLecture;
         private readonly IDeleteLecture _deleteLecture;
+        private readonly IEditLecture _editLecture;
 
         // متد کمکی
         public ManageCourseController(
             IDataBaseContext context,
             IGetCourseDetail getCourseDetail,
             IAddCourseLecture addCourseLecture,
-            IDeleteLecture deleteLecture
+            IDeleteLecture deleteLecture,
+            IEditLecture editLecture
             )
         {
             _context = context;
             _getCourseDetail = getCourseDetail;
             _addCourseLecture = addCourseLecture;
             _deleteLecture = deleteLecture;
+            _editLecture = editLecture;
         }
 
         private bool IsOwner(long courseId)
@@ -110,6 +113,53 @@ namespace EndPoint.Site.Areas.UserPanel.Controllers
             var result = _deleteLecture.Execute(LectureId);
 
             return Json(result);
+        }
+
+
+        [HttpPost]
+        public IActionResult EditLecture(RequestEditCourseLecture request, IFormFile VideoFile)
+        {
+            var targetLecture = _context.Lectures.Find(request.LectureId);
+
+            if (targetLecture == null)
+            {
+                return NotFound();
+            }
+
+            if (!IsOwner(targetLecture.CourseId))
+            {
+                return NotFound();
+            }
+
+            // آپلود فایل
+            //AI Claude
+            if (VideoFile != null && VideoFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "lectures");
+
+                if (!Directory.Exists(uploadsFolder))
+                    Directory.CreateDirectory(uploadsFolder);
+
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(VideoFile.FileName);
+                var filePath = Path.Combine(uploadsFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    VideoFile.CopyTo(stream);
+                }
+
+                request.ContentPath = "/uploads/lectures/" + fileName;
+            }
+            else
+            {
+                // اگه فایل جدید نیومد همون قبلی بمونه
+                request.ContentPath = targetLecture.ContentPath;
+            }
+
+            var result = _editLecture.Execute(request);
+
+            return Json(result);
+
         }
     }
 }
