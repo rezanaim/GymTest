@@ -1,4 +1,5 @@
-﻿using GymTest.Application.Services.Courses.Command;
+﻿using GymTest.Application.Interfaces.Contexts;
+using GymTest.Application.Services.Courses.Command;
 using GymTest.Application.Services.Courses.Query;
 using GymTest.Application.Services.Sports.Query;
 using Microsoft.AspNetCore.Http;
@@ -15,6 +16,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
     [Area("Admin")]
     public class CoursesController : Controller
     {
+        private readonly IDataBaseContext _context;
         private readonly IGetCourses _getCourses;
         private readonly IEditCourse _editCourseByAdmin;
         private readonly IDeleteCourseByAdmin _deleteCourseByAdmin;
@@ -22,6 +24,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         private readonly IGetSports _getSports;
 
         public CoursesController(
+            IDataBaseContext context,
             IGetCourses getCourses,
             IEditCourse editCourseByAdmin,
             IDeleteCourseByAdmin deleteCourseByAdmin,
@@ -32,6 +35,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
 
             )
         {
+            _context = context;
             _getCourses = getCourses;
             _editCourseByAdmin = editCourseByAdmin;
             _deleteCourseByAdmin = deleteCourseByAdmin;
@@ -81,6 +85,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         }
 
         // GET: CourseController/Edit/5
+        [HttpGet]
         public ActionResult Edit(long id)
         {
             var request = new RequestDataForEditCourse()
@@ -112,7 +117,7 @@ namespace EndPoint.Site.Areas.Admin.Controllers
         public ActionResult Edit(RequestEditCourse request, IFormFile ThumbnailFile)
         {
 
-
+            var target = _context.Courses.Find(request.CourseId);
             // آپلود تامبنیل جدید
             if (ThumbnailFile != null && ThumbnailFile.Length > 0)
             {
@@ -130,8 +135,18 @@ namespace EndPoint.Site.Areas.Admin.Controllers
                 }
 
                 request.ThumbnailPath = "/uploads/thumbnails/" + fileName;
-            } //claude 
-            var result = _editCourseByAdmin.Execute(request);
+            }
+            else if (Request.Form["RemoveThumbnail"] == "on")
+            {
+                request.ThumbnailPath = null;
+            }
+            else
+            {
+                request.ThumbnailPath = target.ThumbnailPath;
+            }
+                //claude 
+                var result = _editCourseByAdmin.Execute(request);
+            
 
             return Json(result);
 

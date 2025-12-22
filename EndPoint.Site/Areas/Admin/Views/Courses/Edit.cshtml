@@ -45,11 +45,14 @@
                         <!-- بخش تامبنیل -->
                         <div class="mb-4">
                             <label class="form-label fw-bold">تصویر دوره</label>
-                            <div class="row align-items-center">
-                                <div class="col-md-3 mb-2">
+
+                            <div class="row align-items-start">
+                                <!-- پیش‌نمایش تصویر -->
+                                <div class="col-md-3 mb-3">
                                     @if (!string.IsNullOrEmpty(Model.ThumbnailPath))
                                     {
-                                        <img src="@Model.ThumbnailPath" alt="تصویر فعلی" class="img-thumbnail" style="max-height: 120px;">
+                                        <img src="@Model.ThumbnailPath" alt="تصویر فعلی"
+                                             class="img-thumbnail" style="max-height: 120px;" id="currentThumbnail">
                                         <small class="d-block text-muted mt-1">تصویر فعلی</small>
                                     }
                                     else
@@ -60,9 +63,45 @@
                                         </div>
                                     }
                                 </div>
+
+                                <!-- کنترل‌های آپلود و حذف -->
                                 <div class="col-md-9">
-                                    <input type="file" name="ThumbnailFile" class="form-control" accept="image/*">
-                                    <small class="text-muted">برای تغییر تصویر، فایل جدید انتخاب کنید. فرمت‌های مجاز: JPG, PNG, GIF</small>
+                                    <!-- انتخاب فایل جدید -->
+                                    <div class="mb-2">
+                                        <input type="file" name="ThumbnailFile" class="form-control"
+                                               accept="image/*" id="thumbnailFileInput">
+                                        <small class="text-muted">برای تغییر تصویر، فایل جدید انتخاب کنید. فرمت‌های مجاز: JPG, PNG, GIF</small>
+                                    </div>
+
+                                    <!-- چک‌باکس حذف تصویر (فقط وقتی تصویر داره نمایش بده) -->
+                                    @if (!string.IsNullOrEmpty(Model.ThumbnailPath))
+                                    {
+                                        <div class="mt-3 p-3 bg-light border rounded" id="removeSection">
+                                            <div class="form-check">
+                                                <input type="checkbox" name="RemoveThumbnail"
+                                                       class="form-check-input" id="removeThumbnailCheck">
+                                                <label class="form-check-label text-danger" for="removeThumbnailCheck">
+                                                    <i class="bi bi-trash me-1"></i>
+                                                    حذف تصویر فعلی (بدون جایگزین)
+                                                </label>
+                                            </div>
+                                            <small class="text-muted d-block mt-1">
+                                                با فعال کردن این گزینه، تصویر حذف شده و دوره بدون تصویر خواهد بود.
+                                            </small>
+                                        </div>
+                                    }
+
+                                    <!-- پیش‌نمایش فایل جدید -->
+                                    <div id="newImagePreview" class="mt-3" style="display: none;">
+                                        <div class="alert alert-info py-2">
+                                            <i class="bi bi-image me-1"></i>
+                                            <span id="newFileName"></span>
+                                            <button type="button" class="btn btn-sm btn-outline-danger float-end"
+                                                    id="clearNewFile">
+                                                <i class="bi bi-x"></i>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -88,13 +127,68 @@
         const form = document.getElementById('edit-course-form');
         const messageArea = document.getElementById('message-area');
 
+        var fileInput = document.getElementById('thumbnailFileInput');
+        var removeCheck = document.getElementById('removeThumbnailCheck');
+        var newPreview = document.getElementById('newImagePreview');
+        var newFileName = document.getElementById('newFileName');
+        var clearBtn = document.getElementById('clearNewFile');
+        var removeSection = document.getElementById('removeSection');
+        var currentThumbnail = document.getElementById('currentThumbnail');
+
+        // وقتی فایل جدید انتخاب شد
+        if (fileInput) {
+            fileInput.addEventListener('change', function () {
+                if (this.files && this.files[0]) {
+                    newFileName.textContent = 'فایل جدید: ' + this.files[0].name;
+                    newPreview.style.display = 'block';
+
+                    // غیرفعال کردن چک‌باکس حذف
+                    if (removeCheck) {
+                        removeCheck.checked = false;
+                        removeCheck.disabled = true;
+                        removeSection.style.opacity = '0.5';
+                    }
+                }
+            });
+        }
+
+        // پاک کردن فایل انتخاب شده
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                fileInput.value = '';
+                newPreview.style.display = 'none';
+
+                // فعال کردن دوباره چک‌باکس حذف
+                if (removeCheck) {
+                    removeCheck.disabled = false;
+                    removeSection.style.opacity = '1';
+                }
+            });
+        }
+
+        // وقتی چک‌باکس حذف فعال شد
+        if (removeCheck) {
+            removeCheck.addEventListener('change', function () {
+                if (this.checked) {
+                    // غیرفعال کردن آپلود فایل
+                    fileInput.value = '';
+                    fileInput.disabled = true;
+                    newPreview.style.display = 'none';
+                    if (currentThumbnail) currentThumbnail.style.opacity = '0.3';
+                } else {
+                    fileInput.disabled = false;
+                    if (currentThumbnail) currentThumbnail.style.opacity = '1';
+                }
+            });
+        }
+
+        // ارسال فرم
         if (form) {
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
                 messageArea.innerHTML = '';
                 const formData = new FormData(form);
 
-                // اگه چک‌باکس تیک نخورده، false بفرست
                 if (!document.getElementById('IsActive').checked) {
                     formData.set('IsActive', 'false');
                 }
