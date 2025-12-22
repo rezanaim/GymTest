@@ -10,11 +10,11 @@ namespace GymTest.Domain.Entities.WalletNmore
 {
     public class Wallet : BaseEntity
     {
-        public decimal Balance { get; set; }
-        
+        public decimal Balance { get; set; } = 1000;
+
         //Nav
 
-        public ICollection<Transaction> Transactions { get; set; }
+        public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
 
         public virtual User User { get; set; }
         public long UserId { get; set; }

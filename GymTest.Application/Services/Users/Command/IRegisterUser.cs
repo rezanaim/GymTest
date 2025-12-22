@@ -2,6 +2,7 @@
 using GymTest.Application.Interfaces.Contexts;
 using GymTest.Common;
 using GymTest.Domain.Entities.Users;
+using GymTest.Domain.Entities.WalletNmore;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -133,6 +134,7 @@ namespace GymTest.Application.Services.Users.Command
 
                 var passwordHasher = new PasswordHasher();
                 var hashedPassword = passwordHasher.HashPassword(request.Password);
+
                 var user = new User()
                 {
                     Email = request.Email,
@@ -141,7 +143,18 @@ namespace GymTest.Application.Services.Users.Command
                     Password = hashedPassword,
                     IsActive = true,
                 };
-                
+                var usersWallet = new Wallet()
+                {
+                    User = user,
+                    //UserId = user.Id,
+                };
+
+                //user.WalletId = usersWallet.Id;
+                // با Id مشخص نکردیم چون هنوز یوزر یا ولت هیچکدوم تو دیتا بیس سیو نشدن
+                // یعنی مقدارشون 0 هستش
+                // پس به جای ای دی نویگیشن پراپرتی هاشون رو به هم نسبت میدیم
+                user.Wallet = usersWallet;
+
                 _context.Users.Add(user);
 
                 var userInRole = new UserInRole()

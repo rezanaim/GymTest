@@ -1,6 +1,7 @@
 ﻿using GymTest.Domain.Entities.Commons;
 
 using GymTest.Domain.Entities.CourseNmore;
+using GymTest.Domain.Entities.WalletNmore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +25,8 @@ namespace GymTest.Domain.Entities.Users
 
         public virtual ICollection<Course> CoachedCourses { get; set; }
        
+        public virtual Wallet Wallet { get; set; }
+        public long WalletId { get; set; }
     }
     
 }
