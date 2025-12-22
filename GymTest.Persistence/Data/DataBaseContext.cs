@@ -76,7 +76,13 @@ namespace GymTest.Persistence.Data
                 .OnDelete(DeleteBehavior.Cascade);
             // ====================================================================
 
-
+            modelBuilder.Entity<Wallet>()
+                .HasOne(w => w.User)
+                .WithOne(u=> u.Wallet)
+                .HasForeignKey<Wallet>(w=> w.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            //در یک به یک تعریف رابطه صریح علاوه بر نویگیشن پراپرتی ها الزامیه
+            // چون نمیدونه اف کی کدومه و کدوم وابسته هستش که اینجا تو خط سوم مشخصش کردیم
 
             //Seed Data
             SeedData(modelBuilder);
