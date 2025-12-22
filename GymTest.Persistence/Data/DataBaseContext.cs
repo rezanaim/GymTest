@@ -9,6 +9,7 @@ using GymTest.Application.Interfaces.Contexts;
 using System.Threading;
 using GymTest.Common;
 using GymTest.Domain.Entities.CourseNmore;
+using GymTest.Domain.Entities.WalletNmore;
 
 namespace GymTest.Persistence.Data
 {
@@ -27,6 +28,9 @@ namespace GymTest.Persistence.Data
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserInCourse> UserInCourses { get; set; }
         public DbSet<Lecture> Lectures { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
+        
 
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -101,6 +105,8 @@ namespace GymTest.Persistence.Data
                 modelBuilder.Entity<Sport>().HasQueryFilter(p => !p.IsRemoved);
                 modelBuilder.Entity<Course>().HasQueryFilter(p => !p.IsRemoved);
                 modelBuilder.Entity<Lecture>().HasQueryFilter(p => !p.IsRemoved);
+                modelBuilder.Entity<Wallet>().HasQueryFilter(p => !p.IsRemoved);
+                modelBuilder.Entity<Transaction>().HasQueryFilter(p => !p.IsRemoved);
                 //modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsRemoved);
                 //modelBuilder.Entity<ProductImages>().HasQueryFilter(p => !p.IsRemoved);
                 //modelBuilder.Entity<ProductFeatures>().HasQueryFilter(p => !p.IsRemoved);

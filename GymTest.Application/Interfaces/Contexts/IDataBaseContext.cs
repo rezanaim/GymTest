@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading;
 
 using GymTest.Domain.Entities.CourseNmore;
+using GymTest.Domain.Entities.WalletNmore;
 
 namespace GymTest.Application.Interfaces.Contexts
 {
@@ -23,6 +24,8 @@ namespace GymTest.Application.Interfaces.Contexts
         public DbSet<Category> Categories { get; set; }
         public DbSet<UserInCourse> UserInCourses { get; set; }
         public DbSet<Lecture> Lectures { get; set; }
+        public DbSet<Wallet> Wallets { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
 
         int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
